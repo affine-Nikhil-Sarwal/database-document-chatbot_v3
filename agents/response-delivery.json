@@ -1,0 +1,25 @@
+{
+  "id": "response-delivery",
+  "label": "Response Delivery to Analyst",
+  "type": "agent",
+  "agentId": "final_answer_rewriter",
+  "description": "Formats and returns the final supported answer or refusal to the analyst.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "build",
+  "catalogAgentName": "Final Answer Rewriter",
+  "rationale": "This agent can format the approved answer or refusal into concise user-facing chatbot text without introducing unsupported content.",
+  "explanation": {
+    "purpose": "Present the approved answer or refusal to the analyst in concise chatbot form without adding new facts.",
+    "role_in_workflow": "This is the final user-facing step that formats the approved payload into a clean chatbot response. It preserves the grounded content, citations, and any refusal or conflict messaging while ensuring the final wording stays concise and safe.",
+    "why_it_exists": "This node reuses the Final Answer Rewriter because it is well suited to polish the final response without introducing unsupported content. It exists as a separate delivery layer so the system can keep answer generation and user-facing formatting distinct, which helps preserve trust and consistency.",
+    "consumes_from": [
+      "Evidence Sufficiency and Refusal Gate",
+      "approved answer or refusal payload"
+    ],
+    "feeds_into": [],
+    "chat_relationship": "The user wants a direct self-service chatbot for business analysts, so this step turns the verified answer or refusal into the final response they see.",
+    "execution_summary": "Formats and returns the final supported answer or refusal to the analyst."
+  },
+  "status": "scaffold"
+}
