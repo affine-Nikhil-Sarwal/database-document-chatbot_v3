@@ -1,0 +1,28 @@
+{
+  "id": "conflict-detection",
+  "label": "Conflict Detection Across Sources",
+  "type": "custom",
+  "agentId": null,
+  "description": "Checks the unified evidence for cross-source disagreements and adds conflict annotations.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "build",
+  "catalogAgentName": null,
+  "rationale": "Conflict detection is a required trust feature and no catalog match includes conflict_detection capability.",
+  "explanation": {
+    "purpose": "Identify disagreements or mismatches between document evidence and database evidence before answering.",
+    "role_in_workflow": "Using the normalized evidence set, this step checks whether the two source types support the same conclusion or whether they diverge. It annotates conflicts so the answer can surface them explicitly instead of silently choosing one source.",
+    "why_it_exists": "This node is built custom because conflict detection is a required trust control and no catalog match covers that capability. It exists specifically to support the design choice that when documents and databases disagree, the system should show both and flag the conflict.",
+    "consumes_from": [
+      "Evidence Normalization and Reconciliation",
+      "normalized cross-source evidence set"
+    ],
+    "feeds_into": [
+      "Grounded Answer Synthesis with Citations",
+      "evidence plus conflict annotations"
+    ],
+    "chat_relationship": "The user explicitly said 'Show Both And Flag' when documents and database results disagree, and this is the step that makes that behavior possible.",
+    "execution_summary": "Checks the unified evidence for cross-source disagreements and adds conflict annotations."
+  },
+  "status": "scaffold"
+}
