@@ -1,0 +1,28 @@
+{
+  "id": "evidence-sufficiency-gate",
+  "label": "Evidence Sufficiency and Refusal Gate",
+  "type": "gateway",
+  "agentId": null,
+  "description": "Approves well-supported answers or triggers a refusal when evidence is insufficient.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "build",
+  "catalogAgentName": null,
+  "rationale": "A custom gateway is needed to enforce refusal behavior based on evidence sufficiency because no catalog agent provides quality_evaluation.",
+  "explanation": {
+    "purpose": "Decide whether the drafted answer is sufficiently supported by evidence or must be refused.",
+    "role_in_workflow": "This gateway evaluates the grounded answer and its supporting evidence before anything is shown to the analyst. If support is strong enough, it passes the answer forward; if evidence is weak, missing, or insufficiently grounded, it converts the outcome into a refusal payload.",
+    "why_it_exists": "This node is built custom because no catalog component provides the required quality evaluation and refusal enforcement behavior. It is a core trust mechanism because the user explicitly chose refusal without evidence and preferred verified answers over unverified speed.",
+    "consumes_from": [
+      "Grounded Answer Synthesis with Citations",
+      "draft grounded answer with citations"
+    ],
+    "feeds_into": [
+      "Response Delivery to Analyst",
+      "approved answer or refusal payload"
+    ],
+    "chat_relationship": "The user said 'Refuse without evidence' and agreed to verified answers first, so this gate enforces that unsupported answers do not reach analysts.",
+    "execution_summary": "Approves well-supported answers or triggers a refusal when evidence is insufficient."
+  },
+  "status": "scaffold"
+}
