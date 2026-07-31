@@ -1,0 +1,28 @@
+{
+  "id": "answer-consolidation",
+  "label": "Grounded Answer Synthesis with Citations",
+  "type": "agent",
+  "agentId": "final_answer_consolidation_agent",
+  "description": "Builds one cited, grounded answer draft from the reconciled evidence and conflict annotations.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "build",
+  "catalogAgentName": "Final Answer Consolidation Agent",
+  "rationale": "This agent is the best direct fit for composing a single grounded response from multiple evidence streams.",
+  "explanation": {
+    "purpose": "Compose a single natural-language answer grounded in the collected evidence and include citations and any conflict flags.",
+    "role_in_workflow": "After evidence has been normalized and checked for conflicts, this step turns the evidence set into one coherent response draft. It preserves source citations and conflict annotations so the answer remains transparent and evidence-backed.",
+    "why_it_exists": "This node reuses the Final Answer Consolidation Agent because it is the best available fit for combining multiple evidence streams into one response. It exists because the user wanted a single chatbot answer that can pull from both documents and tables rather than separate outputs.",
+    "consumes_from": [
+      "Conflict Detection Across Sources",
+      "evidence plus conflict annotations"
+    ],
+    "feeds_into": [
+      "Evidence Sufficiency and Refusal Gate",
+      "draft grounded answer with citations"
+    ],
+    "chat_relationship": "This directly supports the user's request for one combined answer that uses only approved data and includes evidence rather than unsupported model knowledge.",
+    "execution_summary": "Builds one cited, grounded answer draft from the reconciled evidence and conflict annotations."
+  },
+  "status": "scaffold"
+}
