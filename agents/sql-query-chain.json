@@ -1,0 +1,28 @@
+{
+  "id": "sql-query-chain",
+  "label": "Access-Aware SQL Generation and Execution",
+  "type": "agent",
+  "agentId": "quin_sql_agent_chain",
+  "description": "Creates and runs access-controlled SQL queries to return structured evidence from approved tables.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "reuse",
+  "catalogAgentName": "Quin SQL Agent Chain",
+  "rationale": "This chain explicitly supports SQL generation and execution against approved tables, matching the structured evidence path.",
+  "explanation": {
+    "purpose": "Generate and execute constrained SQL against approved tables to produce structured evidence for the answer.",
+    "role_in_workflow": "When the router determines that structured data is needed, this step translates the user's question into safe SQL, runs it against approved tables, and returns results with provenance. Its output supplies the database-backed evidence stream that can be combined with document findings.",
+    "why_it_exists": "This node reuses the Quin SQL Agent Chain because it is the best catalog fit for SQL generation and execution over approved enterprise tables. It exists to satisfy the user's need for database-backed answers while keeping the workflow grounded in authorized structured data rather than model assumptions.",
+    "consumes_from": [
+      "Question Understanding and Intent Routing",
+      "structured data route"
+    ],
+    "feeds_into": [
+      "Evidence Normalization and Reconciliation",
+      "query results and provenance"
+    ],
+    "chat_relationship": "The user asked for a chatbot that works across database tables and documents, so this step provides the structured table evidence needed for that combined experience.",
+    "execution_summary": "Creates and runs access-controlled SQL queries to return structured evidence from approved tables."
+  },
+  "status": "scaffold"
+}
