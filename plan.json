@@ -1,0 +1,817 @@
+{
+  "metadata": {
+    "planner_version": "1.0",
+    "generated_at": "2026-07-31T09:56:07Z",
+    "workflow_id": "session-1784805317987-jldkil",
+    "project_name": "Database + document chatbot"
+  },
+  "project_summary": {
+    "problem_statement": "Business analysts need a chatbot that can answer questions across approved enterprise documents and structured database tables without relying on general model knowledge, while preserving trust through evidence-backed responses.",
+    "tech_stack": {
+      "language": "Python 3.11+",
+      "framework": "FastAPI + uvicorn",
+      "key_libraries": [
+        "pydantic",
+        "ag2 (AutoGen) >=0.9,<1.0",
+        "openai (Azure OpenAI client)",
+        "azure-search-documents",
+        "azure-core",
+        "sqlalchemy",
+        "pyodbc",
+        "pandas",
+        "python-dotenv",
+        "pytest",
+        "httpx"
+      ]
+    },
+    "acceptance_criteria": [
+      "Installs without errors",
+      "No unresolved imports",
+      "No placeholder implementations (scripts/check_placeholders.py exits 0)",
+      "No hardcoded/fake data in business logic",
+      "Reuse files under agents/reused/ untouched",
+      "Every graph node has a real implementation",
+      "Every declared integration has a real client and a working health_check()",
+      "python main.py --dry-run exits 0 without live external calls",
+      "Missing required credentials raise a typed ConfigurationError, never a mock or crash",
+      "README instructions are copy-paste runnable and reference files/commands that exist",
+      "HTTP request models only require fields the workflow spec needs on every call; route-selectable / optional inputs default to Optional and downstream nodes skip work when absent (never fabricate placeholders)",
+      "Every async FastAPI route that calls a sync/blocking function wraps it with await asyncio.to_thread(...)",
+      "GET /health exists (matching the app route-prefix convention), calls real integration health_check() methods, returns 200 on success and 503 with a reason on failure — independent of any CLI --health flag",
+      "No HTTP route whose path/name implies a narrow action while implementing a broader/different action (omit or correctly implement; no full-pipeline re-run disguised as a stage-specific endpoint)",
+      "Request-ID middleware is present: UUID (or inbound X-Request-ID) on request state, in structured logs, and in the X-Request-ID response header",
+      "Implements validation: Only approved data may be used",
+      "Implements validation: Evidence is required before answering",
+      "Implements validation: Documents and tables may be combined in one answer",
+      "Implements validation: Conflicts between sources must be shown and flagged",
+      "Implements validation: Unsupported questions must be refused",
+      "Implements validation: Verified answers are preferred over fastest possible responses",
+      "Handles edge case: Documents and database results disagree",
+      "Handles edge case: SQL generation fails for a valid business question",
+      "Handles edge case: Relevant documents are stale or missing",
+      "Handles edge case: Structured data is malformed or incomplete",
+      "Handles edge case: Question spans multiple tables and documents",
+      "Handles edge case: User asks for an answer outside their data permissions",
+      "Handles edge case: Evidence retrieved is partial and not enough to support a safe answer"
+    ]
+  },
+  "assumptions": [
+    {
+      "topic": "Document indexing",
+      "assumption": "Enterprise documents are already indexed in Azure AI Search and queryable by Eryl; no runtime indexing pipeline is in scope.",
+      "reason": "Spec unresolved question on indexing remains open; Eryl reuse agent assumes a pre-built search index."
+    },
+    {
+      "topic": "Citation format",
+      "assumption": "Citations use inline bracket references [Doc-1], [SQL-1] with a trailing Sources section listing document passage excerpts and SQL query text plus row summaries.",
+      "reason": "Spec does not define citation format; a deterministic text format satisfies citation-aware responses without clickable links."
+    },
+    {
+      "topic": "Evidence sufficiency threshold",
+      "assumption": "The sufficiency gate approves when at least one required route (per routing decision) returns non-empty grounded evidence and the consolidated draft explicitly cites that evidence; refuses when all required routes are empty, Eryl returns its insufficient-context sentence, Quin returns empty query_answer or sql_query null, or permission_denied is set in session_context.",
+      "reason": "Spec leaves refusal threshold undefined; deterministic rules are needed for implementation."
+    },
+    {
+      "topic": "Single-source silence",
+      "assumption": "When routing selects both paths but only one source returns evidence, the gate still approves if the returned source directly answers the question; conflicts are flagged only when both sources return contradictory claims.",
+      "reason": "Open question on one-source-silent policy; aligns with combining sources when available without blocking valid single-source answers."
+    },
+    {
+      "topic": "Access control",
+      "assumption": "Access scope is carried in session_context (user_id, roles, allowed_document_ids, allowed_tables); build nodes enforce scope before invoking reuse agents and filter normalized evidence; reuse agents themselves are not modified.",
+      "reason": "Spec requires access-aware behavior but provides no governance node; enforcement must live in build-layer adapters and intake."
+    },
+    {
+      "topic": "Structured tabular data input",
+      "assumption": "structured_tabular_data on intake is metadata describing the approved SQL connection scope (schema name, allowed tables/views), not inline CSV upload; Quin continues to query the live database configured via DATABASE_URL or SQL_* env vars.",
+      "reason": "Quin reuse agent introspects live DB schema; graph input type is unknown and likely refers to connection scope rather than file payload."
+    },
+    {
+      "topic": "Missing graph edge in export",
+      "assumption": "Runtime orchestration must include the logical edge answer-consolidation → evidence-sufficiency-gate even though the exported payload graph edges omit it; session.json graph_draft includes this edge.",
+      "reason": "Payload edges jump from conflict-detection to answer-consolidation and evidence-sufficiency-gate to response-delivery without connecting consolidation to the gate."
+    },
+    {
+      "topic": "Azure OpenAI env naming",
+      "assumption": "Integrations accept both AZURE_OPENAI_ENDPOINT/AZURE_OPENAI_API_KEY/AZURE_OPENAI_DEPLOYMENT (integrations_catalog) and AZURE_OPENAI_API_BASE/GPT4_LLM_MODEL_DEPLOYMENT_NAME (reuse agents); config/settings.py normalizes aliases.",
+      "reason": "Reuse packages and integrations_catalog use different env var names for the same resource."
+    }
+  ],
+  "file_layout": [
+    {
+      "path": "requirements.txt",
+      "purpose": "Pinned Python dependencies for FastAPI, ag2, Azure SDKs, SQLAlchemy, pytest"
+    },
+    {
+      "path": ".env.example",
+      "purpose": "Document all required and optional env vars for Azure OpenAI, Azure Search, SQL, with no secrets"
+    },
+    {
+      "path": "README.md",
+      "purpose": "Copy-paste install, configure, dry-run, test, and run instructions referencing real commands and paths"
+    },
+    {
+      "path": "main.py",
+      "purpose": "FastAPI app entry: --dry-run CLI flag, middleware, router mount, structured logging with request_id"
+    },
+    {
+      "path": "run_workflow.py",
+      "purpose": "Graph orchestrator entrypoint invoked by API routes and CLI; lazy-imports reuse agents"
+    },
+    {
+      "path": "config/settings.py",
+      "purpose": "Typed settings loader, ConfigurationError, env alias normalization"
+    },
+    {
+      "path": "config/autogen_azure_compat.py",
+      "purpose": "Existing ag2 Azure deployment-name compatibility shim (keep, call at startup)"
+    },
+    {
+      "path": "integrations/azure_openai.py",
+      "purpose": "Azure OpenAI client wrapper with health_check() using minimal deployment probe"
+    },
+    {
+      "path": "integrations/azure_search.py",
+      "purpose": "Azure AI Search client wrapper with health_check() via cheap index stats/search"
+    },
+    {
+      "path": "integrations/sql_database.py",
+      "purpose": "SQLAlchemy engine factory with health_check() via SELECT 1 or inspector ping"
+    },
+    {
+      "path": "workflow/models.py",
+      "purpose": "Shared Pydantic models: SessionContext, RoutingDecision, EvidenceItem, NormalizedEvidenceSet, ConflictAnnotation, GateDecision, WorkflowResult"
+    },
+    {
+      "path": "workflow/context.py",
+      "purpose": "Mutable workflow state bag passed through orchestrator stages"
+    },
+    {
+      "path": "workflow/orchestrator.py",
+      "purpose": "Executes full graph with parallel fan-out after routing, conditional skips, adapter calls"
+    },
+    {
+      "path": "workflow/exceptions.py",
+      "purpose": "ConfigurationError, InsufficientEvidenceError, PermissionDeniedError typed exceptions"
+    },
+    {
+      "path": "agents/build/user_question_intake/agent.py",
+      "purpose": "Build node: validate question, session_context, optional document metadata references"
+    },
+    {
+      "path": "agents/build/user_question_intake/contract.json",
+      "purpose": "Local I/O contract mirror for intake node"
+    },
+    {
+      "path": "agents/build/question_routing/agent.py",
+      "purpose": "Build node: Azure OpenAI intent classifier for document/sql/both routing"
+    },
+    {
+      "path": "agents/build/question_routing/contract.json",
+      "purpose": "Local I/O contract for routing node"
+    },
+    {
+      "path": "agents/build/evidence_reconciliation/agent.py",
+      "purpose": "Build node: normalize Eryl and Quin outputs into unified evidence list with provenance"
+    },
+    {
+      "path": "agents/build/evidence_reconciliation/contract.json",
+      "purpose": "Local I/O contract for reconciliation node"
+    },
+    {
+      "path": "agents/build/conflict_detection/agent.py",
+      "purpose": "Build node: detect numeric/textual disagreements across document vs SQL evidence"
+    },
+    {
+      "path": "agents/build/conflict_detection/contract.json",
+      "purpose": "Local I/O contract for conflict detection node"
+    },
+    {
+      "path": "agents/build/answer_consolidation/agent.py",
+      "purpose": "Build node: LLM grounded synthesis producing cited draft answer from evidence + conflicts"
+    },
+    {
+      "path": "agents/build/answer_consolidation/contract.json",
+      "purpose": "Local I/O contract for answer consolidation node"
+    },
+    {
+      "path": "agents/build/evidence_sufficiency_gate/agent.py",
+      "purpose": "Build node: approve or refuse based on evidence coverage and grounding rules"
+    },
+    {
+      "path": "agents/build/evidence_sufficiency_gate/contract.json",
+      "purpose": "Local I/O contract for sufficiency gate node"
+    },
+    {
+      "path": "agents/build/response_delivery/agent.py",
+      "purpose": "Build node: format approved answer or refusal for analyst without adding facts"
+    },
+    {
+      "path": "agents/build/response_delivery/contract.json",
+      "purpose": "Local I/O contract for response delivery node"
+    },
+    {
+      "path": "agents/adapters/routing_to_reuse.py",
+      "purpose": "Maps RoutingDecision to ErylChainRunner/QuinChainRunner kwargs; skips paths when not selected"
+    },
+    {
+      "path": "agents/adapters/reuse_to_reconciliation.py",
+      "purpose": "Maps Eryl/Quin runner outputs to reconciliation input schema with synthetic citation IDs"
+    },
+    {
+      "path": "agents/adapters/consolidation_to_gate.py",
+      "purpose": "Packages draft answer, evidence set, conflicts, routing flags for sufficiency gate"
+    },
+    {
+      "path": "agents/reused/eryl_semantic_rag_agent_chain/",
+      "purpose": "FROZEN reuse package — do not modify"
+    },
+    {
+      "path": "agents/reused/quin_sql_agent_chain/",
+      "purpose": "FROZEN reuse package — do not modify"
+    },
+    {
+      "path": "api/routes.py",
+      "purpose": "POST /upload chat intake, GET /health, optional stage routes only if narrow; all blocking work via asyncio.to_thread"
+    },
+    {
+      "path": "tests/test_workflow_offline.py",
+      "purpose": "Offline unit tests for routing, reconciliation, conflict, gate, delivery without live Azure/SQL"
+    },
+    {
+      "path": "tests/test_health_dry_run.py",
+      "purpose": "Tests for --dry-run, ConfigurationError paths, health route shape"
+    },
+    {
+      "path": "tests/conftest.py",
+      "purpose": "Shared fixtures and env isolation for tests"
+    },
+    {
+      "path": "scripts/check_placeholders.py",
+      "purpose": "Existing anti-placeholder CI guard (must continue exiting 0 on clean code"
+    }
+  ],
+  "nodes": [
+    {
+      "node_id": "user-question-intake",
+      "classification": "build",
+      "target_path": "agents/build/user_question_intake/",
+      "build_spec": {
+        "responsibility": "Receive the analyst's natural-language question and session context from the chatbot interface/API without adding model interpretation.",
+        "input_contract": {
+          "fields": [
+            {
+              "name": "user_question",
+              "type": "string",
+              "required": true,
+              "description": "Analyst question text"
+            },
+            {
+              "name": "session_context",
+              "type": "object",
+              "required": true,
+              "description": "Analyst identity, request_id, roles, allowed_document_ids, allowed_tables, optional uploaded document references"
+            },
+            {
+              "name": "documents_pdf_docx",
+              "type": "file|optional",
+              "required": false,
+              "description": "Optional uploaded PDF/DOCX references when not served from search index"
+            },
+            {
+              "name": "structured_tabular_data",
+              "type": "object|optional",
+              "required": false,
+              "description": "Optional scope metadata for SQL path: schema, allowed tables/views"
+            }
+          ]
+        },
+        "output_contract": {
+          "fields": [
+            {
+              "name": "user_question",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "session_context",
+              "type": "object",
+              "required": true
+            }
+          ]
+        },
+        "business_rules": [
+          "Reject empty or whitespace-only questions with a typed validation error",
+          "Never call LLM at intake",
+          "Preserve session_context verbatim for downstream access checks",
+          "Optional file uploads are stored/referenced by path or id in session_context only; do not index at runtime"
+        ],
+        "error_handling": "Raise ValidationError for missing question; raise PermissionDeniedError when session_context marks permission_denied=true; raise ConfigurationError only when required global config missing (not per-request).",
+        "dependencies": []
+      },
+      "reuse_spec": null
+    },
+    {
+      "node_id": "question-routing",
+      "classification": "build",
+      "target_path": "agents/build/question_routing/",
+      "build_spec": {
+        "responsibility": "Classify the question and decide whether to run document retrieval, SQL query chain, or both in parallel.",
+        "input_contract": {
+          "fields": [
+            {
+              "name": "user_question",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "session_context",
+              "type": "object",
+              "required": true
+            }
+          ]
+        },
+        "output_contract": {
+          "fields": [
+            {
+              "name": "routing_decision",
+              "type": "object",
+              "required": true,
+              "description": "Contains run_document: bool, run_sql: bool, initial_question: string, analysis_type: Semantic-based|SQL-based|Both-independent|Both-dependent, rationale: string"
+            }
+          ]
+        },
+        "business_rules": [
+          "Use Azure OpenAI classification prompt constrained to three routes: document_only, sql_only, both",
+          "Map document_only → run_document=true run_sql=false analysis_type=Semantic-based",
+          "Map sql_only → run_document=false run_sql=true analysis_type=SQL-based",
+          "Map both → run_document=true run_sql=true analysis_type=Both-independent",
+          "Respect session_context: if allowed_tables empty disable SQL; if allowed_document_ids empty disable document path",
+          "If both paths disabled after access filter, set refusal_reason=permission_denied"
+        ],
+        "error_handling": "On classifier failure, default to run_document=true and run_sql=true if permissions allow; otherwise propagate PermissionDeniedError. Never invent answers.",
+        "dependencies": [
+          "user-question-intake"
+        ]
+      },
+      "reuse_spec": null
+    },
+    {
+      "node_id": "document-retrieval",
+      "classification": "reuse",
+      "target_path": "agents/reused/eryl_semantic_rag_agent_chain/",
+      "build_spec": null,
+      "reuse_spec": {
+        "source_library_path": "agents/reused/eryl_semantic_rag_agent_chain/",
+        "entrypoint": "ErylChainRunner.run",
+        "input_contract": {
+          "fields": [
+            {
+              "name": "initial_question",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "analysis_type",
+              "type": "string",
+              "required": false,
+              "enum": [
+                "Semantic-based",
+                "Both-dependent",
+                "Both-independent"
+              ]
+            },
+            {
+              "name": "sql_query",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "sql_answer",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "updated_question",
+              "type": "string|null",
+              "required": false
+            }
+          ]
+        },
+        "output_contract": {
+          "fields": [
+            {
+              "name": "llm_answer",
+              "type": "string"
+            },
+            {
+              "name": "analysis_type",
+              "type": "string"
+            },
+            {
+              "name": "updated_question",
+              "type": "string"
+            },
+            {
+              "name": "question",
+              "type": "string"
+            }
+          ]
+        },
+        "integration_notes": "Import lazily inside asyncio.to_thread to avoid import-time Azure client failures during dry-run. Invoke ErylChainRunner().run(initial_question=..., analysis_type=...). Requires AZURE_OPENAI_API_KEY, AZURE_OPENAI_API_BASE, EMBEDDING_MODEL_DEPLOYMENT_NAME, AZURE_SEARCH_SERVICE_ENDPOINT, AZURE_SEARCH_API_KEY; optional AZURE_SEARCH_INDEX_NAME (default dupont_email_demo), AZURE_SEARCH_SEMANTIC_CONFIG_NAME, AZURE_SEARCH_VECTOR_FIELD_NAME (default content_vector), AZURE_SEARCH_DOCUMENT_ID_FIELD_NAME (default id). Output does NOT include raw passages; downstream adapter must wrap llm_answer as document evidence and note limited provenance. Skip invocation entirely when routing_decision.run_document is false."
+      }
+    },
+    {
+      "node_id": "sql-query-chain",
+      "classification": "reuse",
+      "target_path": "agents/reused/quin_sql_agent_chain/",
+      "build_spec": null,
+      "reuse_spec": {
+        "source_library_path": "agents/reused/quin_sql_agent_chain/",
+        "entrypoint": "QuinChainRunner.run",
+        "input_contract": {
+          "fields": [
+            {
+              "name": "initial_question",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "analysis_type",
+              "type": "string",
+              "required": false,
+              "enum": [
+                "SQL-based",
+                "Both-dependent",
+                "Both-independent"
+              ]
+            },
+            {
+              "name": "updated_question",
+              "type": "string|null",
+              "required": false
+            }
+          ]
+        },
+        "output_contract": {
+          "fields": [
+            {
+              "name": "query",
+              "type": "string"
+            },
+            {
+              "name": "query_answer",
+              "type": "string"
+            },
+            {
+              "name": "analysis_type",
+              "type": "string"
+            },
+            {
+              "name": "inference",
+              "type": "string"
+            },
+            {
+              "name": "query_results",
+              "type": "string",
+              "description": "Present in runner output for adapter compatibility"
+            }
+          ]
+        },
+        "integration_notes": "Import lazily inside asyncio.to_thread. Quin agent.py raises ConfigurationError at import if Azure OpenAI or DB config missing — orchestrator dry-run must not import until live run. Invoke QuinChainRunner().run(initial_question=..., analysis_type=...). Requires DATABASE_URL or SQL_SERVER/SQL_DATABASE/SQL_USERNAME/SQL_PASSWORD plus Azure OpenAI vars. Skip when routing_decision.run_sql is false. SQL failures surface as empty query_answer or error strings in query_results; adapter marks sql_status=failed without modifying frozen agent."
+      }
+    },
+    {
+      "node_id": "evidence-reconciliation",
+      "classification": "build",
+      "target_path": "agents/build/evidence_reconciliation/",
+      "build_spec": {
+        "responsibility": "Transform document and SQL outputs into one normalized cross-source evidence set with citations and provenance.",
+        "input_contract": {
+          "fields": [
+            {
+              "name": "document_result",
+              "type": "object|null",
+              "required": false,
+              "description": "Adapted Eryl output or null when skipped"
+            },
+            {
+              "name": "sql_result",
+              "type": "object|null",
+              "required": false,
+              "description": "Adapted Quin output or null when skipped"
+            },
+            {
+              "name": "routing_decision",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "session_context",
+              "type": "object",
+              "required": true
+            }
+          ]
+        },
+        "output_contract": {
+          "fields": [
+            {
+              "name": "natural_language_answers",
+              "type": "string",
+              "required": true,
+              "description": "Concatenated raw NL answers from sources for traceability"
+            },
+            {
+              "name": "normalized_cross_source_evidence_set",
+              "type": "object",
+              "required": true,
+              "description": "List of EvidenceItem objects with source_type, citation_id, text, provenance, confidence"
+            }
+          ]
+        },
+        "business_rules": [
+          "Assign citation_ids Doc-1..Doc-N for document evidence and SQL-1..SQL-N for structured evidence",
+          "Include provenance: for SQL store query text and truncated query_results; for documents store llm_answer excerpt and updated_question",
+          "Mark items with status empty|ok|failed|insufficient based on reuse outputs",
+          "Never fabricate evidence when a path was skipped or returned empty",
+          "Filter evidence against session_context allowed scopes"
+        ],
+        "error_handling": "If both paths required by routing are empty/failed, produce evidence set with coverage=none flag for downstream refusal; do not raise unless input objects are malformed.",
+        "dependencies": [
+          "document-retrieval",
+          "sql-query-chain",
+          "question-routing"
+        ]
+      },
+      "reuse_spec": null
+    },
+    {
+      "node_id": "conflict-detection",
+      "classification": "build",
+      "target_path": "agents/build/conflict_detection/",
+      "build_spec": {
+        "responsibility": "Check unified evidence for cross-source disagreements and attach conflict annotations.",
+        "input_contract": {
+          "fields": [
+            {
+              "name": "normalized_cross_source_evidence_set",
+              "type": "object",
+              "required": true
+            }
+          ]
+        },
+        "output_contract": {
+          "fields": [
+            {
+              "name": "evidence_plus_conflict_annotations",
+              "type": "object",
+              "required": true,
+              "description": "Evidence set plus conflicts array with severity, summary, doc_claim, sql_claim, citation_ids"
+            }
+          ]
+        },
+        "business_rules": [
+          "Compare document vs SQL numeric claims and key factual statements using normalized text and simple numeric extraction",
+          "Flag conflict when both sources address the same metric/topic with materially different values or contradictory statements",
+          "When only one source present, conflicts array is empty",
+          "Include show_both_and_flag=true on each conflict per spec",
+          "Do not resolve conflicts by picking a winner"
+        ],
+        "error_handling": "On detection logic errors, return evidence unchanged with conflicts=[] and warning flag; never suppress existing evidence.",
+        "dependencies": [
+          "evidence-reconciliation"
+        ]
+      },
+      "reuse_spec": null
+    },
+    {
+      "node_id": "answer-consolidation",
+      "classification": "build",
+      "target_path": "agents/build/answer_consolidation/",
+      "build_spec": {
+        "responsibility": "Build one cited, grounded answer draft from reconciled evidence and conflict annotations using only supplied evidence.",
+        "input_contract": {
+          "fields": [
+            {
+              "name": "evidence_plus_conflict_annotations",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "user_question",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        "output_contract": {
+          "fields": [
+            {
+              "name": "natural_language_answers",
+              "type": "string",
+              "required": true,
+              "description": "Draft grounded answer with inline [Doc-n]/[SQL-n] citations and explicit conflict section when conflicts non-empty"
+            }
+          ]
+        },
+        "business_rules": [
+          "Azure OpenAI prompt must forbid world knowledge and require citing only provided evidence items",
+          "When conflicts exist, present both sides and label CONFLICT",
+          "Do not answer if evidence set coverage=none; emit empty draft with reason insufficient_evidence",
+          "Preserve citation_ids referenced in evidence items"
+        ],
+        "error_handling": "On LLM failure return empty draft with generation_error flag; never substitute generic knowledge.",
+        "dependencies": [
+          "conflict-detection"
+        ]
+      },
+      "reuse_spec": null
+    },
+    {
+      "node_id": "evidence-sufficiency-gate",
+      "classification": "build",
+      "target_path": "agents/build/evidence_sufficiency_gate/",
+      "build_spec": {
+        "responsibility": "Approve well-supported answers or trigger refusal when evidence is insufficient.",
+        "input_contract": {
+          "fields": [
+            {
+              "name": "draft_answer",
+              "type": "string",
+              "required": true,
+              "description": "From answer-consolidation natural_language_answers"
+            },
+            {
+              "name": "normalized_cross_source_evidence_set",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "evidence_plus_conflict_annotations",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "routing_decision",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "session_context",
+              "type": "object",
+              "required": true
+            }
+          ]
+        },
+        "output_contract": {
+          "fields": [
+            {
+              "name": "natural_language_answers",
+              "type": "string",
+              "required": true,
+              "description": "Echo of draft or refusal message"
+            },
+            {
+              "name": "approved_answer_or_refusal_payload",
+              "type": "object",
+              "required": true,
+              "description": "GateDecision: status approved|refused, message, citations, conflicts, refusal_reason"
+            }
+          ]
+        },
+        "business_rules": [
+          "Refuse when draft empty or contains insufficient_evidence/generation_error",
+          "Refuse when required route evidence missing (document required but document status empty/insufficient; SQL likewise)",
+          "Refuse on permission_denied in session_context",
+          "Approve when draft cites at least one ok evidence item matching a required route",
+          "Approved payload must include conflicts unchanged",
+          "Verified answers preferred: perform lightweight check that cited ids exist in evidence set"
+        ],
+        "error_handling": "Default to refusal on ambiguous sufficiency; include explicit refusal_reason enum insufficient_evidence|permission_denied|sql_failed|documents_missing|partial_evidence.",
+        "dependencies": [
+          "answer-consolidation"
+        ]
+      },
+      "reuse_spec": null
+    },
+    {
+      "node_id": "response-delivery",
+      "classification": "build",
+      "target_path": "agents/build/response_delivery/",
+      "build_spec": {
+        "responsibility": "Format and return the final supported answer or refusal to the analyst without introducing new facts.",
+        "input_contract": {
+          "fields": [
+            {
+              "name": "approved_answer_or_refusal_payload",
+              "type": "object",
+              "required": true
+            }
+          ]
+        },
+        "output_contract": {
+          "fields": [
+            {
+              "name": "natural_language_answers",
+              "type": "string",
+              "required": true,
+              "description": "Final user-facing chatbot text"
+            }
+          ]
+        },
+        "business_rules": [
+          "Approved: concise markdown/plain text preserving citations and conflict flags verbatim",
+          "Refused: empathetic fixed template explaining insufficient approved evidence without speculative content",
+          "No LLM call required if template formatting suffices; optional light LLM rewrite allowed only with strict no-new-facts system prompt",
+          "Never remove or alter citation markers or conflict annotations"
+        ],
+        "error_handling": "If payload malformed, return safe generic refusal message with delivery_error flag internally logged.",
+        "dependencies": [
+          "evidence-sufficiency-gate"
+        ]
+      },
+      "reuse_spec": null
+    }
+  ],
+  "generation_order": [
+    "evidence-sufficiency-gate",
+    "user-question-intake",
+    "question-routing",
+    "response-delivery",
+    "document-retrieval",
+    "sql-query-chain",
+    "evidence-reconciliation",
+    "conflict-detection",
+    "answer-consolidation"
+  ],
+  "integration_points": [
+    {
+      "from": "user-question-intake",
+      "to": "question-routing",
+      "adapter_needed": false,
+      "notes": "Direct pass-through of user_question and session_context."
+    },
+    {
+      "from": "question-routing",
+      "to": "document-retrieval",
+      "adapter_needed": true,
+      "notes": "agents/adapters/routing_to_reuse.py maps routing_decision to ErylChainRunner.run(initial_question, analysis_type). Skip with document_result=null when run_document=false."
+    },
+    {
+      "from": "question-routing",
+      "to": "sql-query-chain",
+      "adapter_needed": true,
+      "notes": "Same adapter module maps to QuinChainRunner.run(initial_question, analysis_type). Skip with sql_result=null when run_sql=false. Execute document-retrieval and sql-query-chain concurrently via asyncio.gather + asyncio.to_thread when both enabled."
+    },
+    {
+      "from": "document-retrieval",
+      "to": "evidence-reconciliation",
+      "adapter_needed": true,
+      "notes": "agents/adapters/reuse_to_reconciliation.py converts Eryl {llm_answer, analysis_type, updated_question, question} into document evidence items. Eryl does not expose raw search chunks in runner output; provenance is limited to answer text and question fields unless extended metadata captured externally without editing frozen agent."
+    },
+    {
+      "from": "sql-query-chain",
+      "to": "evidence-reconciliation",
+      "adapter_needed": true,
+      "notes": "reuse_to_reconciliation.py maps Quin {query, query_answer, inference, query_results} into SQL evidence with provenance {sql_query, row_preview}. Detect failure when query empty or query_answer matches insufficiency patterns or query_results contains error prefix."
+    },
+    {
+      "from": "evidence-reconciliation",
+      "to": "conflict-detection",
+      "adapter_needed": false,
+      "notes": "Pass normalized_cross_source_evidence_set directly."
+    },
+    {
+      "from": "conflict-detection",
+      "to": "answer-consolidation",
+      "adapter_needed": false,
+      "notes": "Pass evidence_plus_conflict_annotations and original user_question."
+    },
+    {
+      "from": "answer-consolidation",
+      "to": "evidence-sufficiency-gate",
+      "adapter_needed": true,
+      "notes": "agents/adapters/consolidation_to_gate.py bundles draft_answer, evidence set, conflicts, routing_decision, session_context. Required despite missing edge in exported payload graph."
+    },
+    {
+      "from": "evidence-sufficiency-gate",
+      "to": "response-delivery",
+      "adapter_needed": false,
+      "notes": "Pass approved_answer_or_refusal_payload object directly."
+    }
+  ],
+  "risks_or_gaps": [
+    "Exported payload graph edges omit answer-consolidation → evidence-sufficiency-gate; nodes_detail for evidence-sufficiency-gate lists incorrect graph_inputs (documents_pdf_docx, structured_tabular_data) instead of consolidation output — orchestrator must follow session.json graph_draft and logical data flow.",
+    "ErylChainRunner output lacks raw retrieved passages and document IDs; citation fidelity for document sources is limited unless search hit metadata is captured without modifying agents/reused/eryl_semantic_rag_agent_chain/.",
+    "Quin agent.py performs DB schema introspection at import time and raises ConfigurationError when Azure OpenAI or DB config missing — dry-run and health endpoints must use lazy imports and config checks without importing quin agent module.",
+    "Access-aware enforcement is not implemented inside frozen reuse agents; incorrect session_context filtering in build layer could over- or under-share data.",
+    "Citation format, sufficiency thresholds, and single-source silence policy remain business unresolved; implemented defaults may need stakeholder adjustment.",
+    "No tests/ directory exists yet in scaffold; codegen must create meaningful offline tests — live Azure/SQL integration tests will require credentials.",
+    "POST /evidence-sufficiency-gate route in scaffold implies stage-specific entry but gate depends on upstream consolidation output; either remove narrow route or implement true partial replay with stored context, not full pipeline disguised as gate-only.",
+    "Structured tabular data graph input semantics ambiguous — if literal file upload is required future adapter work is needed; current plan treats it as SQL scope metadata only."
+  ],
+  "implementation_prompt": {
+    "version": "1.0",
+    "content": "Build a runnable Python FastAPI project for workflow session-1784805317987-jldkil (Database + document chatbot). Follow generation_order exactly. NEVER modify any file under agents/reused/.\n\n## 1. Project foundation (generation_order steps 1-4 foundation)\nCreate requirements.txt, .env.example, config/settings.py (ConfigurationError, env alias map for AZURE_OPENAI_ENDPOINT↔AZURE_OPENAI_API_BASE and AZURE_OPENAI_DEPLOYMENT↔GPT4_LLM_MODEL_DEPLOYMENT_NAME), workflow/exceptions.py, workflow/models.py. Keep config/autogen_azure_compat.py and call apply_autogen_azure_compat() at startup in main.py and run_workflow.py.\n\nImplement integrations/azure_openai.py, integrations/azure_search.py (client_pattern from integrations_catalog: SearchClient(endpoint, index_name, AzureKeyCredential)), integrations/sql_database.py each with health_check() performing minimal live probe. Missing required credentials must raise ConfigurationError with clear message.\n\nExtend main.py: retain RequestIdMiddleware; add argparse --dry-run that validates settings structure and exits 0 without calling external services or importing reuse agents; configure logging to include request_id.\n\n## 2. Build evidence-sufficiency-gate (generation_order[0])\nImplement agents/build/evidence_sufficiency_gate/agent.py with deterministic approve/refuse rules documented in build_spec. Input is consolidation bundle via adapter, NOT raw documents from nodes_detail graph_inputs. Output GateDecision JSON in approved_answer_or_refusal_payload.\n\n## 3. Build user-question-intake (generation_order[1])\nImplement agents/build/user_question_intake/agent.py validating user_question and session_context. Support optional documents_pdf_docx and structured_tabular_data as Optional fields.\n\n## 4. Build question-routing (generation_order[2])\nImplement agents/build/question_routing/agent.py using Azure OpenAI to classify document/sql/both. Output routing_decision object. Enforce session_context permission filters.\n\n## 5. Build response-delivery (generation_order[3])\nImplement agents/build/response_delivery/agent.py formatting final natural_language_answers from gate payload without adding facts.\n\n## 6. Wire reuse document-retrieval (generation_order[4])\nDo NOT edit agents/reused/eryl_semantic_rag_agent_chain/. Create agents/adapters/routing_to_reuse.py. Lazy-import ErylChainRunner; call entrypoint ErylChainRunner.run(initial_question, analysis_type=...). Wrap in asyncio.to_thread from async routes. Skip when run_document=false.\n\n## 7. Wire reuse sql-query-chain (generation_order[5])\nDo NOT edit agents/reused/quin_sql_agent_chain/. Use QuinChainRunner.run(initial_question, analysis_type=...). Lazy import only on live execution. Skip when run_sql=false. Run in parallel with document path when both enabled.\n\n## 8. Build evidence-reconciliation (generation_order[6])\nImplement agents/build/evidence_reconciliation/agent.py plus agents/adapters/reuse_to_reconciliation.py mapping Eryl and Quin outputs to normalized EvidenceItem list with citation_ids and provenance.\n\n## 9. Build conflict-detection (generation_order[7])\nImplement agents/build/conflict_detection/agent.py detecting cross-source disagreements; append conflicts array; never pick winner.\n\n## 10. Build answer-consolidation (generation_order[8])\nImplement agents/build/answer_consolidation/agent.py using Azure OpenAI with evidence-only prompt producing cited draft answer. Create agents/adapters/consolidation_to_gate.py for gate input bundle.\n\n## 11. Orchestrator and API\nImplement workflow/orchestrator.py and run_workflow.py run_workflow_from_node(node_id, payload): full graph runtime order is intake → routing → (parallel Eryl + Quin) → reconciliation → conflict → consolidation → sufficiency gate → response delivery. Honor conditional skips. Include missing edge consolidation→gate.\n\nUpdate api/routes.py: POST /upload (or /chat) as primary intake calling run_workflow_from_node('user-question-intake', payload) via await asyncio.to_thread(...). Add GET /health calling all integration health_check() methods; return 200 or 503 with reason. Remove or correctly implement POST /evidence-sufficiency-gate — do not rerun full pipeline under gate-only name unless accepting full upstream context object.\n\nRequest models: require user_question on every chat call; session_context Optional with sensible defaults; documents_pdf_docx and structured_tabular_data Optional.\n\n## 12. Tests and quality\nAdd tests/test_workflow_offline.py covering routing, reconciliation, conflict, gate refusal/approve, delivery formatting with fixture evidence (no live Azure/SQL). Add tests/test_health_dry_run.py for --dry-run and ConfigurationError. Ensure python -m pytest tests/ -q passes offline. Ensure scripts/check_placeholders.py exits 0.\n\n## 13. README\nUpdate README with pip install -r requirements.txt, cp .env.example .env, python main.py --dry-run, uvicorn main:app, curl examples matching actual routes, env var list aligned with reuse agents and integrations_catalog.\n\n## Constraints\nReuse nodes under agents/reused/ are FROZEN — never edit, rename, or refactor them; integrate only via adapters and lazy imports. Follow generation_order for implementation sequence. No placeholder NotImplementedError, mocks, or hardcoded fake business data in application code. Refuse unsupported questions rather than hallucinating. Show both sides and flag conflicts when sources disagree."
+  }
+}
