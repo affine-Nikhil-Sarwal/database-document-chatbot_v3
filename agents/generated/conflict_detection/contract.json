@@ -1,0 +1,7 @@
+{
+  "node_id": "conflict-detection",
+  "entrypoint": "run",
+  "module": "agents.generated.conflict_detection.agent",
+  "inputs": ["normalized_cross_source_evidence_set"],
+  "outputs": ["evidence_plus_conflict_annotations"]
+}

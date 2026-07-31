@@ -1,0 +1,16 @@
+ag2>=0.9,<1.0
+azure-core
+azure-search-documents
+fastapi
+httpx
+openai>=1.0
+pandas
+pydantic
+pydantic-settings
+pyodbc
+pytest
+python-dotenv
+sqlalchemy
+structlog
+tenacity
+uvicorn

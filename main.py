@@ -1,37 +1,55 @@
-# Scaffold warning: FastAPI intake content kind was ambiguous for node 'evidence-sufficiency-gate' (required_capability=quality_evaluation); defaulted route body to JSON.
-"""FastAPI HTTP surface for the generated workflow (scaffold)."""
+"""FastAPI HTTP surface and CLI for the database + document chatbot workflow."""
 
 from __future__ import annotations
 
+import argparse
+import asyncio
+import json
 import logging
-import re
-import shutil
+import sys
 import traceback
 import uuid
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, File, Request, UploadFile
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from run_workflow import run_workflow_from_node
-try:
-    from config.autogen_azure_compat import apply_autogen_azure_compat
-
-    apply_autogen_azure_compat()
-except Exception:
-    pass
-
 APP_ROOT = Path(__file__).resolve().parent
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s [%(name)s] request_id=%(request_id)s %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
+
+
+class RequestIdFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        if not hasattr(record, "request_id"):
+            record.request_id = "-"
+        return True
+
+
+for handler in logging.root.handlers:
+    handler.addFilter(RequestIdFilter())
+
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Agentic LaunchPad Workflow")
+from config.autogen_azure_compat import apply_autogen_azure_compat
+from config.settings import ConfigurationError, get_settings
+from orchestrator.graph import run_workflow_from_node, set_dry_run
+
+_settings = get_settings()
+_settings.export_to_environ()
+apply_autogen_azure_compat()
+
+app = FastAPI(title="Database + Document Chatbot")
 
 
 class RequestIdMiddleware:
-    """Pure ASGI request-ID middleware — never BaseHTTPMiddleware."""
+    """Pure ASGI request-ID middleware."""
 
     header_name = b"x-request-id"
 
@@ -58,7 +76,20 @@ class RequestIdMiddleware:
                 message = {**message, "headers": headers}
             await send(message)
 
-        await self.app(scope, receive, send_with_request_id)
+        token = request_id_context.set(request_id)
+        try:
+            await self.app(scope, receive, send_with_request_id)
+        finally:
+            request_id_context.reset(token)
+
+
+request_id_context: Any = None
+try:
+    import contextvars
+
+    request_id_context = contextvars.ContextVar("request_id", default="-")
+except ImportError:
+    request_id_context = None
 
 
 app.add_middleware(RequestIdMiddleware)
@@ -68,11 +99,9 @@ app.add_middleware(RequestIdMiddleware)
 async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     request_id = getattr(request.state, "request_id", None)
     logger.exception(
-        "Unhandled exception method=%s path=%s request_id=%s type=%s",
-        request.method,
+        "Unhandled exception path=%s request_id=%s",
         request.url.path,
         request_id,
-        type(exc).__name__,
     )
     headers: dict[str, str] = {}
     if request_id:
@@ -90,17 +119,136 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
     )
 
 
-class WorkflowPayload(BaseModel):
-    """JSON body accepted by intake endpoints."""
-
-    data: dict[str, Any] = Field(default_factory=dict)
-
 from api.routes import router
 
 app.include_router(router)
 
 
-if __name__ == "__main__":
-    import uvicorn
+def _load_input_json(path: Path) -> dict[str, Any]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError("Input JSON must be an object")
+    return data
 
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
+
+def _build_payload(args: argparse.Namespace) -> dict[str, Any]:
+    if args.input_json:
+        payload = _load_input_json(Path(args.input_json))
+    elif args.file:
+        file_path = Path(args.file)
+        payload = {
+            "user_question": args.question or f"Summarize the content of {file_path.name}",
+            "session_context": {
+                "user_id": "cli-user",
+                "request_id": str(uuid.uuid4()),
+                "allowed_document_ids": ["*"],
+                "allowed_tables": ["*"],
+            },
+            "documents_pdf_docx": str(file_path.resolve()),
+        }
+    else:
+        if not args.question:
+            raise ConfigurationError("Provide --question, --file, or --input-json")
+        payload = {
+            "user_question": args.question,
+            "session_context": {
+                "user_id": "cli-user",
+                "request_id": str(uuid.uuid4()),
+                "allowed_document_ids": ["*"],
+                "allowed_tables": ["*"],
+            },
+        }
+    if args.question and "user_question" not in payload:
+        payload["user_question"] = args.question
+    return payload
+
+
+async def _run_health_checks() -> dict[str, Any]:
+    from integrations import azure_openai, azure_search, sql_database
+
+    results = await asyncio.gather(
+        azure_openai.health_check(),
+        azure_search.health_check(),
+        sql_database.health_check(),
+    )
+    integrations = list(results)
+    overall = "ok" if all(r.get("status") == "ok" for r in integrations) else "degraded"
+    return {"status": overall, "integrations": integrations}
+
+
+def _cli_health() -> int:
+    result = asyncio.run(_run_health_checks())
+    print(json.dumps(result, indent=2))
+    return 0 if result["status"] == "ok" else 1
+
+
+def _cli_dry_run() -> int:
+    set_dry_run(True)
+    sample = {
+        "user_question": "What were total sales last quarter?",
+        "session_context": {
+            "user_id": "dry-run",
+            "request_id": "dry-run",
+            "allowed_document_ids": ["*"],
+            "allowed_tables": ["*"],
+        },
+    }
+    result = run_workflow_from_node("user-question-intake", sample)
+    assert "natural_language_answers" in result
+    print(json.dumps({"status": "ok", "dry_run": True, "result_keys": sorted(result.keys())}, indent=2))
+    return 0
+
+
+def _cli_run(args: argparse.Namespace) -> int:
+    set_dry_run(False)
+    payload = _build_payload(args)
+    result = run_workflow_from_node("user-question-intake", payload)
+    print(json.dumps(result, indent=2, default=str))
+    return 0
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Database + document chatbot — grounded QA across documents and SQL tables.",
+    )
+    parser.add_argument("--health", action="store_true", help="Check integration health and exit")
+    parser.add_argument("--dry-run", action="store_true", help="Exercise orchestration without live I/O")
+    parser.add_argument("--question", "-q", type=str, help="Analyst question text")
+    parser.add_argument("--file", "-f", type=str, help="Path to an input document reference")
+    parser.add_argument("--input-json", type=str, help="Path to JSON payload for intake")
+    parser.add_argument("--serve", action="store_true", help="Start uvicorn server")
+    parser.add_argument("--host", default="0.0.0.0", help="Uvicorn host")
+    parser.add_argument("--port", type=int, default=8000, help="Uvicorn port")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = _build_parser()
+    args = parser.parse_args(argv)
+
+    if args.health:
+        return _cli_health()
+    if args.dry_run:
+        return _cli_dry_run()
+    if args.serve:
+        import uvicorn
+
+        uvicorn.run("main:app", host=args.host, port=args.port, reload=False)
+        return 0
+    if args.question or args.file or args.input_json:
+        try:
+            return _cli_run(args)
+        except ConfigurationError as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+    parser.print_help()
+    return 0
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        import uvicorn
+
+        uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
+    else:
+        raise SystemExit(main())

@@ -1,0 +1,7 @@
+{
+  "node_id": "answer-consolidation",
+  "entrypoint": "run",
+  "module": "agents.generated.answer_consolidation.agent",
+  "inputs": ["evidence_plus_conflict_annotations", "user_question"],
+  "outputs": ["natural_language_answers"]
+}

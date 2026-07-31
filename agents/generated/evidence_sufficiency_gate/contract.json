@@ -1,0 +1,13 @@
+{
+  "node_id": "evidence-sufficiency-gate",
+  "entrypoint": "run",
+  "module": "agents.generated.evidence_sufficiency_gate.agent",
+  "inputs": [
+    "draft_answer",
+    "normalized_cross_source_evidence_set",
+    "evidence_plus_conflict_annotations",
+    "routing_decision",
+    "session_context"
+  ],
+  "outputs": ["natural_language_answers", "approved_answer_or_refusal_payload"]
+}

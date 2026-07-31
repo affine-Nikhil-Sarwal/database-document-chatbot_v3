@@ -1,0 +1,7 @@
+{
+  "node_id": "question-routing",
+  "entrypoint": "run",
+  "module": "agents.generated.question_routing.agent",
+  "inputs": ["user_question", "session_context"],
+  "outputs": ["routing_decision"]
+}

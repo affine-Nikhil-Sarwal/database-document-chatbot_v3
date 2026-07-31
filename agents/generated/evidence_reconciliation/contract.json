@@ -1,0 +1,7 @@
+{
+  "node_id": "evidence-reconciliation",
+  "entrypoint": "run",
+  "module": "agents.generated.evidence_reconciliation.agent",
+  "inputs": ["document_result", "sql_result", "routing_decision", "session_context"],
+  "outputs": ["natural_language_answers", "normalized_cross_source_evidence_set"]
+}

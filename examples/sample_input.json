@@ -1,0 +1,14 @@
+{
+  "user_question": "What were total Mars sales in Q1 2024 according to approved documents and sales tables?",
+  "session_context": {
+    "user_id": "analyst-001",
+    "request_id": "example-request-001",
+    "roles": ["analyst"],
+    "allowed_document_ids": ["*"],
+    "allowed_tables": ["*"]
+  },
+  "structured_tabular_data": {
+    "schema": "dbo",
+    "allowed_tables": ["Mars_Sales_Data"]
+  }
+}

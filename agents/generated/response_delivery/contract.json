@@ -1,0 +1,7 @@
+{
+  "node_id": "response-delivery",
+  "entrypoint": "run",
+  "module": "agents.generated.response_delivery.agent",
+  "inputs": ["approved_answer_or_refusal_payload"],
+  "outputs": ["natural_language_answers"]
+}
