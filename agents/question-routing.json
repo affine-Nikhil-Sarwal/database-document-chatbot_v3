@@ -1,0 +1,30 @@
+{
+  "id": "question-routing",
+  "label": "Question Understanding and Intent Routing",
+  "type": "agent",
+  "agentId": "pipeline_intent_classifier",
+  "description": "Classifies the question and routes it to the document path, SQL path, or both.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "build",
+  "catalogAgentName": "Pipeline Intent Classifier",
+  "rationale": "This agent directly matches routing capability and is well suited to classify whether the question needs document, SQL, or unified handling.",
+  "explanation": {
+    "purpose": "Determine whether the question needs document evidence, database evidence, or both, and route it accordingly.",
+    "role_in_workflow": "After intake, this step interprets the user's request and decides which grounded evidence paths should run. It can trigger the document retrieval path, the SQL path, or both in parallel so the system can produce one combined answer.",
+    "why_it_exists": "This node reuses the Pipeline Intent Classifier because it is a strong catalog match for routing questions into the right downstream pipelines. The routing step is essential because the user explicitly wanted one chatbot that can combine documents and tables in the same response rather than forcing a single-source path.",
+    "consumes_from": [
+      "User Question Intake",
+      "user question and session context"
+    ],
+    "feeds_into": [
+      "Access-Aware Document Retrieval",
+      "Access-Aware SQL Generation and Execution",
+      "document evidence route",
+      "structured data route"
+    ],
+    "chat_relationship": "This directly addresses the user's requirement to combine both approved documents and database tables in one answer, while still deciding when only one source type is needed.",
+    "execution_summary": "Classifies the question and routes it to the document path, SQL path, or both."
+  },
+  "status": "scaffold"
+}
