@@ -1,0 +1,28 @@
+{
+  "id": "document-retrieval",
+  "label": "Access-Aware Document Retrieval",
+  "type": "agent",
+  "agentId": "eryl_semantic_rag_agent_chain",
+  "description": "Finds relevant approved document passages and returns them with citations.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "reuse",
+  "catalogAgentName": "Eryl Semantic RAG Agent Chain",
+  "rationale": "This agent already provides document retrieval over indexed enterprise content and fits the approved-document evidence path.",
+  "explanation": {
+    "purpose": "Retrieve relevant evidence passages from approved enterprise documents within the analyst's access scope.",
+    "role_in_workflow": "When the router determines that unstructured evidence is needed, this step searches the approved document corpus and returns the most relevant passages with citation metadata. Its output becomes one half of the evidence base used for the final grounded answer.",
+    "why_it_exists": "This node reuses the Eryl Semantic RAG Agent Chain because it already supports enterprise document retrieval and aligns well with the approved-document requirement. It is access-aware because the chatbot must answer only from approved data and should respect the analyst's allowed scope.",
+    "consumes_from": [
+      "Question Understanding and Intent Routing",
+      "document evidence route"
+    ],
+    "feeds_into": [
+      "Evidence Normalization and Reconciliation",
+      "retrieved passages with citations"
+    ],
+    "chat_relationship": "The user said the bot must answer only from approved data, so this step provides grounded document evidence instead of relying on general model knowledge.",
+    "execution_summary": "Finds relevant approved document passages and returns them with citations."
+  },
+  "status": "scaffold"
+}
