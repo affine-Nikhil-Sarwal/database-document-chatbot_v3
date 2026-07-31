@@ -1,0 +1,25 @@
+{
+  "id": "user-question-intake",
+  "label": "User Question Intake",
+  "type": "tool",
+  "agentId": null,
+  "description": "Receives the analyst's question and session context from the chatbot interface.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "build",
+  "catalogAgentName": null,
+  "rationale": "No catalog match provides intake capability, so the chatbot entrypoint should be implemented as a custom UI/API node.",
+  "explanation": {
+    "purpose": "Capture the analyst's natural-language question and session context as the trusted starting point for the workflow.",
+    "role_in_workflow": "This is the entry step where the chatbot receives the user's request, identity, and any session metadata needed for downstream access-aware processing. It establishes the exact question that will be routed into document retrieval, SQL querying, or both.",
+    "why_it_exists": "This node is built rather than reused because no catalog component provides the intake capability for the chatbot entrypoint. A custom intake layer is needed to reliably pass user text and context into the grounded pipeline without adding any model-generated interpretation too early.",
+    "consumes_from": [],
+    "feeds_into": [
+      "Question Understanding and Intent Routing",
+      "user question and session context"
+    ],
+    "chat_relationship": "The user asked for a database + document chatbot for business analysts, so the workflow needs a front door that accepts analyst questions directly from the chatbot UI.",
+    "execution_summary": "Receives the analyst's question and session context from the chatbot interface."
+  },
+  "status": "scaffold"
+}
