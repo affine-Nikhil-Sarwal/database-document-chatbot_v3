@@ -1,11 +1,11 @@
 {
   "session_id": "session-1784805317987-jldkil",
-  "status": "planning",
-  "success": false,
+  "status": "validation_incomplete",
+  "success": true,
   "scaffold_dir": "C:\\Projectss\\Agentic-LaunchPad\\backend\\data\\generated\\session-1784805317987-jldkil",
   "node_count": 9,
-  "cursor_agent_id": "bc-691e1830-15d4-4d41-934b-a7acee624d64",
-  "cursor_run_id": "run-3c3f6536-5c4b-4997-b33e-23c070d7ca25",
+  "cursor_agent_id": "bc-ebd09118-9298-4dc0-965d-61affc180ce2",
+  "cursor_run_id": "run-9fcd50bf-216a-4a00-a188-1e55efad2d0a",
   "planner_agent_id": "bc-691e1830-15d4-4d41-934b-a7acee624d64",
   "planner_run_id": "run-3c3f6536-5c4b-4997-b33e-23c070d7ca25",
   "repo_url": "https://github.com/affine-Nikhil-Sarwal/database-document-chatbot_v3",
@@ -16,10 +16,13 @@
   "github_repo": "database-document-chatbot_v3",
   "attempt_count": 1,
   "github_artifacts_synced": false,
-  "error": null,
-  "warnings": [],
+  "error": "Settings validation could not be completed: config.py not found on GitHub head affine-Nikhil-Sarwal/database-document-chatbot_v3@main",
+  "warnings": [
+    "Waiting for Cursor agent branch metadata (1/2)",
+    "Waiting for Cursor agent branch metadata (2/2)"
+  ],
   "reuse_violations": [],
   "created_at": "2026-07-31T09:51:55.847146+00:00",
-  "updated_at": "2026-07-31T09:56:55.365041+00:00",
-  "finished_at": null
+  "updated_at": "2026-07-31T10:04:08.853781+00:00",
+  "finished_at": "2026-07-31T10:04:08.853781+00:00"
 }
