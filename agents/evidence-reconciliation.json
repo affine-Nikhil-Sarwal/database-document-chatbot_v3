@@ -1,0 +1,30 @@
+{
+  "id": "evidence-reconciliation",
+  "label": "Evidence Normalization and Reconciliation",
+  "type": "custom",
+  "agentId": null,
+  "description": "Transforms document and SQL outputs into one normalized evidence set with citations and provenance.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "build",
+  "catalogAgentName": null,
+  "rationale": "No catalog agent exposes evidence_reconciliation capability, so a custom merge layer is needed to normalize SQL and document outputs.",
+  "explanation": {
+    "purpose": "Normalize document passages and SQL outputs into a single comparable evidence set with source metadata.",
+    "role_in_workflow": "This step sits after both retrieval branches and converts their different output formats into a common evidence structure. It prepares citations, provenance, and normalized facts so downstream conflict detection and answer synthesis can reason across sources consistently.",
+    "why_it_exists": "This node is built custom because no catalog component provides evidence reconciliation across document and SQL outputs. It is necessary because the workflow must combine both source types into one grounded answer, which requires a shared evidence representation before comparison and synthesis.",
+    "consumes_from": [
+      "Access-Aware Document Retrieval",
+      "Access-Aware SQL Generation and Execution",
+      "retrieved passages with citations",
+      "query results and provenance"
+    ],
+    "feeds_into": [
+      "Conflict Detection Across Sources",
+      "normalized cross-source evidence set"
+    ],
+    "chat_relationship": "Because the user wanted one combined answer from both documents and tables, this step merges those evidence streams into a unified basis for response generation.",
+    "execution_summary": "Transforms document and SQL outputs into one normalized evidence set with citations and provenance."
+  },
+  "status": "scaffold"
+}
