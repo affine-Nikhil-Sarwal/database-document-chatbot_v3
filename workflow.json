@@ -2,7 +2,7 @@
   "sessionId": "session-1784805317987-jldkil",
   "title": "Database + document chatbot",
   "problemStatement": "Business analysts need a chatbot that can answer questions across approved enterprise documents and structured database tables without relying on general model knowledge, while preserving trust through evidence-backed responses.",
-  "exportedAt": "2026-07-31T09:44:22.243438+00:00",
+  "exportedAt": "2026-07-31T09:52:03.622446+00:00",
   "plan": {
     "graph": {
       "nodes": [
