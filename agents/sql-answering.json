@@ -1,0 +1,30 @@
+{
+  "id": "sql-answering",
+  "label": "SQL Answering Chain",
+  "type": "agent",
+  "agentId": "quin_sql_agent_chain",
+  "description": "Generates and executes SQL against structured sources to return analyst-ready structured evidence.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "reuse",
+  "catalogAgentName": "Quin SQL Agent Chain",
+  "rationale": "matched Quin SQL Agent Chain",
+  "explanation": {
+    "purpose": "SQL Answering Chain",
+    "role_in_workflow": "SQL Answering Chain is a agent step. Receives from Analysis Type Router, Analysis Type Router, Analysis Type Router. Passes to Evidence Reconciliation & Confidence Gate, Evidence Reconciliation & Confidence Gate, Evidence Reconciliation & Confidence Gate.",
+    "why_it_exists": "matched Quin SQL Agent Chain",
+    "consumes_from": [
+      "Analysis Type Router",
+      "Analysis Type Router",
+      "Analysis Type Router"
+    ],
+    "feeds_into": [
+      "Evidence Reconciliation & Confidence Gate",
+      "Evidence Reconciliation & Confidence Gate",
+      "Evidence Reconciliation & Confidence Gate"
+    ],
+    "chat_relationship": "Supports the user-defined workflow requirements.",
+    "execution_summary": "Generates and executes SQL against structured sources to return analyst-ready structured evidence."
+  },
+  "status": "scaffold"
+}
