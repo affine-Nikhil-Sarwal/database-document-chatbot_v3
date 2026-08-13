@@ -1,0 +1,26 @@
+{
+  "id": "chat-intake",
+  "label": "Chat Intake & Safety Gate",
+  "type": "agent",
+  "agentId": null,
+  "description": "Receives the internal user question and performs intake prechecks before orchestration.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "build",
+  "catalogAgentName": null,
+  "rationale": "catalog match Intake Gateway (intake_gateway) has no seedable package in agent library",
+  "explanation": {
+    "purpose": "Chat Intake & Safety Gate",
+    "role_in_workflow": "Chat Intake & Safety Gate is a agent step. Receives from Workflow entry. Passes to Analysis Type Router.",
+    "why_it_exists": "catalog match Intake Gateway (intake_gateway) has no seedable package in agent library",
+    "consumes_from": [
+      "Workflow entry"
+    ],
+    "feeds_into": [
+      "Analysis Type Router"
+    ],
+    "chat_relationship": "Supports the user-defined workflow requirements.",
+    "execution_summary": "Receives the internal user question and performs intake prechecks before orchestration."
+  },
+  "status": "scaffold"
+}
