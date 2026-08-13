@@ -1,0 +1,31 @@
+{
+  "id": "analysis-router",
+  "label": "Analysis Type Router",
+  "type": "gateway",
+  "agentId": null,
+  "description": "Classifies the question into SQL-based, Semantic-based, Both-dependent, or Both-independent paths.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "build",
+  "catalogAgentName": null,
+  "rationale": "catalog match Pipeline Intent Classifier (pipeline_intent_classifier) has no seedable package in agent library",
+  "explanation": {
+    "purpose": "Analysis Type Router",
+    "role_in_workflow": "Analysis Type Router is a gateway step. Receives from Chat Intake & Safety Gate. Passes to SQL Answering Chain, Document Retrieval Chain, SQL Answering Chain, Document Retrieval Chain, SQL Answering Chain, Document Retrieval Chain.",
+    "why_it_exists": "catalog match Pipeline Intent Classifier (pipeline_intent_classifier) has no seedable package in agent library",
+    "consumes_from": [
+      "Chat Intake & Safety Gate"
+    ],
+    "feeds_into": [
+      "SQL Answering Chain",
+      "Document Retrieval Chain",
+      "SQL Answering Chain",
+      "Document Retrieval Chain",
+      "SQL Answering Chain",
+      "Document Retrieval Chain"
+    ],
+    "chat_relationship": "Supports the user-defined workflow requirements.",
+    "execution_summary": "Classifies the question into SQL-based, Semantic-based, Both-dependent, or Both-independent paths."
+  },
+  "status": "scaffold"
+}
