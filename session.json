@@ -1,292 +1,13 @@
 {
-  "id": "session-1784805317987-jldkil",
+  "id": "session-1786614384962-jczp69",
   "spec": {
     "status": "ready",
-    "problem_statement": "Business analysts need a chatbot that can answer questions across approved enterprise documents and structured database tables without relying on general model knowledge, while preserving trust through evidence-backed responses.",
-    "fields": {
-      "use_case": {
-        "key": "use_case",
-        "label": "Main goal",
-        "value": "Provide a single natural-language chatbot experience that combines document retrieval and database querying into one grounded answer, flags conflicts between sources, and refuses to answer when evidence is insufficient.",
-        "status": "known",
-        "notes": null,
-        "source": "user_answer",
-        "confidence": null
-      },
-      "data_volume": {
-        "key": "data_volume",
-        "label": "How much data",
-        "value": null,
-        "status": "pending",
-        "notes": null,
-        "source": null,
-        "confidence": null
-      },
-      "accuracy_target": {
-        "key": "accuracy_target",
-        "label": "How accurate it must be",
-        "value": "Only approved data may be used; Evidence is required before answering; Documents and tables may be combined in one answer; Conflicts between sources must be shown and flagged; Unsupported questions must be refused; Verified answers are preferred over fastest possible responses",
-        "status": "known",
-        "notes": null,
-        "source": "user_answer",
-        "confidence": null
-      },
-      "hitl_behavior": {
-        "key": "hitl_behavior",
-        "label": "When someone should review results",
-        "value": "No human review step is currently required. The system is expected to serve analysts directly and refuse unsupported answers rather than route them for manual validation.",
-        "status": "known",
-        "notes": null,
-        "source": "user_answer",
-        "confidence": null
-      },
-      "integrations": {
-        "key": "integrations",
-        "label": "Where data comes from and goes",
-        "value": null,
-        "status": "pending",
-        "notes": null,
-        "source": null,
-        "confidence": null
-      },
-      "latency_target": {
-        "key": "latency_target",
-        "label": "How fast answers are needed",
-        "value": null,
-        "status": "pending",
-        "notes": null,
-        "source": null,
-        "confidence": null
-      },
-      "model_preference": {
-        "key": "model_preference",
-        "label": "AI preference",
-        "value": "Use AI to classify questions, retrieve relevant document context, assist with SQL generation, reconcile evidence from both sources, detect conflicts, and compose grounded answers. The model must be restricted to approved enterprise data and should not use general world knowledge to fill gaps. Responses must be evidence-backed, citation-aware, and refusal-capable when support is insufficient.",
-        "status": "known",
-        "notes": null,
-        "source": "user_answer",
-        "confidence": null
-      },
-      "deployment_platform": {
-        "key": "deployment_platform",
-        "label": "Where it should run",
-        "value": null,
-        "status": "pending",
-        "notes": null,
-        "source": null,
-        "confidence": null
-      },
-      "architectural_flow": {
-        "key": "architectural_flow",
-        "label": "Order of steps in your process",
-        "value": "User question intake \u2192 Question understanding and intent routing \u2192 Access-aware document retrieval \u2192 Access-aware SQL generation and database query execution \u2192 Evidence normalization across document and table results \u2192 Conflict detection across sources \u2192 Answer synthesis with citations \u2192 Evidence sufficiency check and refusal handling \u2192 Response delivery to analyst",
-        "status": "known",
-        "notes": null,
-        "source": "user_answer",
-        "confidence": null
-      },
-      "architectural_flow_feedback": {
-        "key": "architectural_flow_feedback",
-        "label": "Check the steps we understood",
-        "value": null,
-        "status": "pending",
-        "notes": null,
-        "source": null,
-        "confidence": null
-      },
-      "architectural_pattern": {
-        "key": "architectural_pattern",
-        "label": "Overall approach",
-        "value": null,
-        "status": "pending",
-        "notes": null,
-        "source": null,
-        "confidence": null
-      },
-      "core_components": {
-        "key": "core_components",
-        "label": "Main parts you need",
-        "value": "User question intake, Question understanding and intent routing, Access-aware document retrieval, Access-aware SQL generation and database query execution, Evidence normalization across document and table results, Conflict detection across sources, Answer synthesis with citations, Evidence sufficiency check and refusal handling, Response delivery to analyst",
-        "status": "known",
-        "notes": null,
-        "source": "user_answer",
-        "confidence": null
-      },
-      "data_flow": {
-        "key": "data_flow",
-        "label": "Where information comes from and goes",
-        "value": "Business analysts submit a question through the chatbot UI. The system interprets the request and determines whether it needs document evidence, database evidence, or both. It retrieves relevant passages from approved documents and generates then executes constrained SQL against approved tables using the analyst's access scope. Retrieved passages and query results are normalized into a common evidence set, checked for conflicts, and passed to the answer generation step. The model produces one grounded natural-language response with citations only if the evidence is sufficient. If evidence is missing or weak, the system refuses to answer. The final response exits through the chatbot interface to the analyst.",
-        "status": "known",
-        "notes": null,
-        "source": "user_answer",
-        "confidence": null
-      },
-      "orchestration_model": {
-        "key": "orchestration_model",
-        "label": "How steps run (one-by-one or together)",
-        "value": null,
-        "status": "pending",
-        "notes": null,
-        "source": null,
-        "confidence": null
-      },
-      "scalability_constraints": {
-        "key": "scalability_constraints",
-        "label": "How many people use it at once",
-        "value": "No use of general model knowledge when enterprise data is silent; Answers must be grounded in approved sources; System should balance responsiveness with evidence verification; Conflict visibility is required when sources disagree",
-        "status": "known",
-        "notes": null,
-        "source": "user_answer",
-        "confidence": null
-      }
-    },
-    "transcript_summary": "Provide a single natural-language chatbot experience that combines document retrieval and database querying into one grounded answer, flags conflicts between sources, and refuses to answer when evidence is insufficient.",
+    "problem_statement": "Internal employees need a chatbot that can answer analyst-style questions by combining information from structured databases and documents in one natural-language response, without requiring users to manually search dashboards, run queries, or read source files.",
+    "transcript_summary": "Provide a single internal chatbot that routes questions to the right data path, merges database and document results, and returns concise answers with warnings when confidence is low.",
     "catalog_hints": [],
-    "architecture_blueprint": "## Provide a single natural-language chatbot experience that combines document retrieval and database querying into one grounded answer, flags conflicts between sources, and refuses to answer when evidence is insufficient.\n\nBusiness analysts need a chatbot that can answer questions across approved enterprise documents and structured database tables without relying on general model knowledge, while preserving trust through evidence-backed responses.\n\n### Integrations\n\n\n### HITL\nNo human review step is currently required. The system is expected to serve analysts directly and refuse unsupported answers rather than route them for manual validation.",
-    "graph_draft": {
-      "nodes": [
-        {
-          "id": "user-question-intake",
-          "label": "User Question Intake",
-          "type": "tool",
-          "agent_id": null,
-          "description": "Receives the analyst's question and session context from the chatbot interface.",
-          "required_capability": "intake",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "question-routing",
-          "label": "Question Understanding and Intent Routing",
-          "type": "agent",
-          "agent_id": "pipeline_intent_classifier",
-          "description": "Classifies the question and routes it to the document path, SQL path, or both.",
-          "required_capability": "routing",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "document-retrieval",
-          "label": "Access-Aware Document Retrieval",
-          "type": "agent",
-          "agent_id": "eryl_semantic_rag_agent_chain",
-          "description": "Finds relevant approved document passages and returns them with citations.",
-          "required_capability": "retrieval",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "sql-query-chain",
-          "label": "Access-Aware SQL Generation and Execution",
-          "type": "agent",
-          "agent_id": "quin_sql_agent_chain",
-          "description": "Creates and runs access-controlled SQL queries to return structured evidence from approved tables.",
-          "required_capability": "sql_generation",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "evidence-reconciliation",
-          "label": "Evidence Normalization and Reconciliation",
-          "type": "custom",
-          "agent_id": null,
-          "description": "Transforms document and SQL outputs into one normalized evidence set with citations and provenance.",
-          "required_capability": "evidence_reconciliation",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "conflict-detection",
-          "label": "Conflict Detection Across Sources",
-          "type": "custom",
-          "agent_id": null,
-          "description": "Checks the unified evidence for cross-source disagreements and adds conflict annotations.",
-          "required_capability": "conflict_detection",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "answer-consolidation",
-          "label": "Grounded Answer Synthesis with Citations",
-          "type": "agent",
-          "agent_id": "final_answer_consolidation_agent",
-          "description": "Builds one cited, grounded answer draft from the reconciled evidence and conflict annotations.",
-          "required_capability": "answer_consolidation",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "evidence-sufficiency-gate",
-          "label": "Evidence Sufficiency and Refusal Gate",
-          "type": "gateway",
-          "agent_id": null,
-          "description": "Approves well-supported answers or triggers a refusal when evidence is insufficient.",
-          "required_capability": "quality_evaluation",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "response-delivery",
-          "label": "Response Delivery to Analyst",
-          "type": "agent",
-          "agent_id": "final_answer_rewriter",
-          "description": "Formats and returns the final supported answer or refusal to the analyst.",
-          "required_capability": "answer_consolidation",
-          "inputs": [],
-          "outputs": []
-        }
-      ],
-      "edges": [
-        {
-          "from_id": "user-question-intake",
-          "to_id": "question-routing",
-          "label": "user question and session context"
-        },
-        {
-          "from_id": "question-routing",
-          "to_id": "document-retrieval",
-          "label": "document evidence route"
-        },
-        {
-          "from_id": "question-routing",
-          "to_id": "sql-query-chain",
-          "label": "structured data route"
-        },
-        {
-          "from_id": "document-retrieval",
-          "to_id": "evidence-reconciliation",
-          "label": "retrieved passages with citations"
-        },
-        {
-          "from_id": "sql-query-chain",
-          "to_id": "evidence-reconciliation",
-          "label": "query results and provenance"
-        },
-        {
-          "from_id": "evidence-reconciliation",
-          "to_id": "conflict-detection",
-          "label": "normalized cross-source evidence set"
-        },
-        {
-          "from_id": "conflict-detection",
-          "to_id": "answer-consolidation",
-          "label": "evidence plus conflict annotations"
-        },
-        {
-          "from_id": "answer-consolidation",
-          "to_id": "evidence-sufficiency-gate",
-          "label": "draft grounded answer with citations"
-        },
-        {
-          "from_id": "evidence-sufficiency-gate",
-          "to_id": "response-delivery",
-          "label": "approved answer or refusal payload"
-        }
-      ]
-    },
     "pipeline_spec": {
-      "problem_statement": "Business analysts need a chatbot that can answer questions across approved enterprise documents and structured database tables without relying on general model knowledge, while preserving trust through evidence-backed responses.",
-      "goal": "Provide a single natural-language chatbot experience that combines document retrieval and database querying into one grounded answer, flags conflicts between sources, and refuses to answer when evidence is insufficient.",
+      "problem_statement": "Internal employees need a chatbot that can answer analyst-style questions by combining information from structured databases and documents in one natural-language response, without requiring users to manually search dashboards, run queries, or read source files.",
+      "goal": "Provide a single internal chatbot that routes questions to the right data path, merges database and document results, and returns concise answers with warnings when confidence is low.",
       "inputs": [
         "Documents (PDF/DOCX)",
         "Structured tabular data"
@@ -295,57 +16,46 @@
         "Natural-language answers"
       ],
       "core_components": [
-        "User question intake",
-        "Question understanding and intent routing",
-        "Access-aware document retrieval",
-        "Access-aware SQL generation and database query execution",
-        "Evidence normalization across document and table results",
-        "Conflict detection across sources",
-        "Answer synthesis with citations",
-        "Evidence sufficiency check and refusal handling",
-        "Response delivery to analyst"
+        "User submits question through chat UI",
+        "Intent classifier determines whether the question needs database lookup, document retrieval, or both",
+        "SQL answering path queries structured data sources",
+        "Document retrieval path searches indexed document content",
+        "Answer merger reconciles results from both paths using source priority rules",
+        "Confidence evaluator scores answer quality and detects weak or conflicting results",
+        "Response generator returns a natural-language answer with warning when confidence is low"
       ],
-      "data_flow": "Business analysts submit a question through the chatbot UI. The system interprets the request and determines whether it needs document evidence, database evidence, or both. It retrieves relevant passages from approved documents and generates then executes constrained SQL against approved tables using the analyst's access scope. Retrieved passages and query results are normalized into a common evidence set, checked for conflicts, and passed to the answer generation step. The model produces one grounded natural-language response with citations only if the evidence is sufficient. If evidence is missing or weak, the system refuses to answer. The final response exits through the chatbot interface to the analyst.",
-      "model_requirements": "Use AI to classify questions, retrieve relevant document context, assist with SQL generation, reconcile evidence from both sources, detect conflicts, and compose grounded answers. The model must be restricted to approved enterprise data and should not use general world knowledge to fill gaps. Responses must be evidence-backed, citation-aware, and refusal-capable when support is insufficient.",
+      "data_flow": "Information enters through a chat interface as a natural-language question. The system classifies the request, sends structured portions to a SQL query path and document portions to a retrieval path, then combines the returned facts into a single answer. If sources conflict, the merger applies a maintained source priority list to choose the preferred result. A confidence check runs before output, and the final answer is returned to the user with a warning if confidence is low. No supporting rows or document snippets are shown in the user response.",
+      "model_requirements": "Use an AI-driven routed pattern that classifies user intent, generates or assists SQL for structured questions, performs retrieval over indexed documents for unstructured questions, and synthesizes both into one final answer. The model must support low-confidence signaling and conflict handling based on source priority rather than timestamp freshness.",
       "integrations": [],
-      "hitl": "No human review step is currently required. The system is expected to serve analysts directly and refuse unsupported answers rather than route them for manual validation.",
+      "hitl": "No human review step in the normal user flow. Low-confidence answers are still shown to users with a warning rather than being blocked for manual review.",
       "validations": [
-        "Only approved data may be used",
-        "Evidence is required before answering",
-        "Documents and tables may be combined in one answer",
-        "Conflicts between sources must be shown and flagged",
-        "Unsupported questions must be refused",
-        "Verified answers are preferred over fastest possible responses"
+        "Low-confidence warning before response",
+        "Conflict resolution using source priority list",
+        "Single merged answer across database and documents",
+        "No evidence, rows, or document snippets shown to end users"
       ],
       "assumptions": [
-        "Business analysts are the primary users",
-        "The chatbot can access both enterprise documents and structured tables",
-        "A single answer may cite both document passages and database results",
-        "Trust is more important than speculative completeness",
-        "Users prefer refusal over low-confidence answers"
+        "All employees are allowed to see all source data",
+        "A maintained source priority list exists or will be created",
+        "Users prefer direct answers over source transparency",
+        "The system should answer even when confidence is low, as long as it warns"
       ],
       "constraints": [
-        "No use of general model knowledge when enterprise data is silent",
-        "Answers must be grounded in approved sources",
-        "System should balance responsiveness with evidence verification",
-        "Conflict visibility is required when sources disagree"
+        "Internal-only use",
+        "Natural-language output only",
+        "No evidence display in responses"
       ],
       "edge_cases": [
-        "Documents and database results disagree",
-        "SQL generation fails for a valid business question",
-        "Relevant documents are stale or missing",
-        "Structured data is malformed or incomplete",
-        "Question spans multiple tables and documents",
-        "User asks for an answer outside their data permissions",
-        "Evidence retrieved is partial and not enough to support a safe answer"
+        "Database and documents provide conflicting answers",
+        "Answer confidence is low",
+        "Question spans both structured and unstructured sources",
+        "Source priority list is missing or outdated"
       ],
       "unresolved_questions": [
-        "Which databases and document repositories must be connected",
-        "Whether citations need clickable links, quoted passages, or row-level references",
-        "Which analyst use cases are in scope first",
-        "Expected usage volume and response time targets",
-        "How access control should be enforced across documents and tables",
-        "How to handle SQL failures and stale source content"
+        "Which database platforms and document repositories need to be connected",
+        "What confidence threshold should trigger a warning",
+        "What scale, concurrency, and latency targets the system must support",
+        "How the source priority list will be defined, governed, and updated"
       ]
     }
   },
@@ -353,91 +63,71 @@
     "graph": {
       "nodes": [
         {
-          "id": "user-question-intake",
-          "label": "User Question Intake",
-          "type": "tool",
+          "id": "chat-intake",
+          "label": "Chat Intake & Safety Gate",
+          "type": "agent",
           "agent_id": null,
-          "description": "Receives the analyst's question and session context from the chatbot interface.",
+          "description": "Receives the internal user question and performs intake prechecks before orchestration.",
           "required_capability": "intake",
           "inputs": [],
           "outputs": []
         },
         {
-          "id": "question-routing",
-          "label": "Question Understanding and Intent Routing",
-          "type": "agent",
-          "agent_id": "pipeline_intent_classifier",
-          "description": "Classifies the question and routes it to the document path, SQL path, or both.",
+          "id": "analysis-router",
+          "label": "Analysis Type Router",
+          "type": "gateway",
+          "agent_id": null,
+          "description": "Classifies the question into SQL-based, Semantic-based, Both-dependent, or Both-independent paths.",
           "required_capability": "routing",
           "inputs": [],
           "outputs": []
         },
         {
-          "id": "document-retrieval",
-          "label": "Access-Aware Document Retrieval",
-          "type": "agent",
-          "agent_id": "eryl_semantic_rag_agent_chain",
-          "description": "Finds relevant approved document passages and returns them with citations.",
-          "required_capability": "retrieval",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "sql-query-chain",
-          "label": "Access-Aware SQL Generation and Execution",
+          "id": "sql-answering",
+          "label": "SQL Answering Chain",
           "type": "agent",
           "agent_id": "quin_sql_agent_chain",
-          "description": "Creates and runs access-controlled SQL queries to return structured evidence from approved tables.",
+          "description": "Generates and executes SQL against structured sources to return analyst-ready structured evidence.",
           "required_capability": "sql_generation",
           "inputs": [],
           "outputs": []
         },
         {
+          "id": "document-retrieval",
+          "label": "Document Retrieval Chain",
+          "type": "agent",
+          "agent_id": "eryl_semantic_rag_agent_chain",
+          "description": "Retrieves relevant indexed document content for the user question from the document corpus.",
+          "required_capability": "retrieval",
+          "inputs": [],
+          "outputs": []
+        },
+        {
           "id": "evidence-reconciliation",
-          "label": "Evidence Normalization and Reconciliation",
-          "type": "custom",
+          "label": "Evidence Reconciliation & Confidence Gate",
+          "type": "agent",
           "agent_id": null,
-          "description": "Transforms document and SQL outputs into one normalized evidence set with citations and provenance.",
+          "description": "Reconciles SQL and document evidence, applies source-priority logic, and flags conflicts or weak support.",
           "required_capability": "evidence_reconciliation",
           "inputs": [],
           "outputs": []
         },
         {
-          "id": "conflict-detection",
-          "label": "Conflict Detection Across Sources",
-          "type": "custom",
-          "agent_id": null,
-          "description": "Checks the unified evidence for cross-source disagreements and adds conflict annotations.",
-          "required_capability": "conflict_detection",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "answer-consolidation",
-          "label": "Grounded Answer Synthesis with Citations",
+          "id": "answer-quality-eval",
+          "label": "Answer Quality Evaluation",
           "type": "agent",
-          "agent_id": "final_answer_consolidation_agent",
-          "description": "Builds one cited, grounded answer draft from the reconciled evidence and conflict annotations.",
-          "required_capability": "answer_consolidation",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "evidence-sufficiency-gate",
-          "label": "Evidence Sufficiency and Refusal Gate",
-          "type": "gateway",
           "agent_id": null,
-          "description": "Approves well-supported answers or triggers a refusal when evidence is insufficient.",
+          "description": "Scores groundedness and completeness to determine whether a low-confidence warning is needed.",
           "required_capability": "quality_evaluation",
           "inputs": [],
           "outputs": []
         },
         {
-          "id": "response-delivery",
-          "label": "Response Delivery to Analyst",
+          "id": "final-answer",
+          "label": "Final Natural-Language Answer",
           "type": "agent",
-          "agent_id": "final_answer_rewriter",
-          "description": "Formats and returns the final supported answer or refusal to the analyst.",
+          "agent_id": null,
+          "description": "Produces a concise natural-language response that merges results and includes a warning when confidence is low.",
           "required_capability": "answer_consolidation",
           "inputs": [],
           "outputs": []
@@ -445,842 +135,1421 @@
       ],
       "edges": [
         {
-          "from_id": "user-question-intake",
-          "to_id": "question-routing",
-          "label": "user question and session context"
+          "from_id": "chat-intake",
+          "to_id": "analysis-router",
+          "label": "validated user question",
+          "condition": null
         },
         {
-          "from_id": "question-routing",
+          "from_id": "analysis-router",
+          "to_id": "sql-answering",
+          "label": "route to structured path",
+          "condition": "analysis_type == 'SQL-based'"
+        },
+        {
+          "from_id": "analysis-router",
           "to_id": "document-retrieval",
-          "label": "document evidence route"
+          "label": "route to document path",
+          "condition": "analysis_type == 'Semantic-based'"
         },
         {
-          "from_id": "question-routing",
-          "to_id": "sql-query-chain",
-          "label": "structured data route"
+          "from_id": "analysis-router",
+          "to_id": "sql-answering",
+          "label": "fan-out structured path",
+          "condition": "analysis_type == 'Both-dependent'"
+        },
+        {
+          "from_id": "analysis-router",
+          "to_id": "document-retrieval",
+          "label": "fan-out document path",
+          "condition": "analysis_type == 'Both-dependent'"
+        },
+        {
+          "from_id": "analysis-router",
+          "to_id": "sql-answering",
+          "label": "fan-out structured path",
+          "condition": "analysis_type == 'Both-independent'"
+        },
+        {
+          "from_id": "analysis-router",
+          "to_id": "document-retrieval",
+          "label": "fan-out document path",
+          "condition": "analysis_type == 'Both-independent'"
+        },
+        {
+          "from_id": "sql-answering",
+          "to_id": "evidence-reconciliation",
+          "label": "structured evidence",
+          "condition": null
         },
         {
           "from_id": "document-retrieval",
           "to_id": "evidence-reconciliation",
-          "label": "retrieved passages with citations"
+          "label": "document evidence",
+          "condition": null
         },
         {
-          "from_id": "sql-query-chain",
+          "from_id": "sql-answering",
           "to_id": "evidence-reconciliation",
-          "label": "query results and provenance"
+          "label": "structured evidence for hybrid merge",
+          "condition": "analysis_type == 'Both-dependent'"
+        },
+        {
+          "from_id": "document-retrieval",
+          "to_id": "evidence-reconciliation",
+          "label": "document evidence for hybrid merge",
+          "condition": "analysis_type == 'Both-dependent'"
+        },
+        {
+          "from_id": "sql-answering",
+          "to_id": "evidence-reconciliation",
+          "label": "structured evidence for hybrid merge",
+          "condition": "analysis_type == 'Both-independent'"
+        },
+        {
+          "from_id": "document-retrieval",
+          "to_id": "evidence-reconciliation",
+          "label": "document evidence for hybrid merge",
+          "condition": "analysis_type == 'Both-independent'"
         },
         {
           "from_id": "evidence-reconciliation",
-          "to_id": "conflict-detection",
-          "label": "normalized cross-source evidence set"
+          "to_id": "answer-quality-eval",
+          "label": "merged evidence and conflict flags",
+          "condition": null
         },
         {
-          "from_id": "conflict-detection",
-          "to_id": "answer-consolidation",
-          "label": "evidence plus conflict annotations"
-        },
-        {
-          "from_id": "evidence-sufficiency-gate",
-          "to_id": "response-delivery",
-          "label": "approved answer or refusal payload"
+          "from_id": "answer-quality-eval",
+          "to_id": "final-answer",
+          "label": "quality score and warning flag",
+          "condition": null
         }
       ]
     },
     "reuse_decisions": [
       {
-        "node_id": "user-question-intake",
-        "node_label": "User Question Intake",
+        "node_id": "chat-intake",
+        "node_label": "Chat Intake & Safety Gate",
         "decision": "build",
         "agent_id": null,
         "agent_name": null,
-        "rationale": "No catalog match provides intake capability, so the chatbot entrypoint should be implemented as a custom UI/API node.",
-        "catalog_score": 0,
-        "raw_search_score": null,
-        "weak_overall_coverage": false,
+        "rationale": "catalog match Intake Gateway (intake_gateway) has no seedable package in agent library",
+        "catalog_score": null,
         "required_capability": "intake"
       },
       {
-        "node_id": "question-routing",
-        "node_label": "Question Understanding and Intent Routing",
-        "decision": "reuse",
-        "agent_id": "pipeline_intent_classifier",
-        "agent_name": "Pipeline Intent Classifier",
-        "rationale": "This agent directly matches routing capability and is well suited to classify whether the question needs document, SQL, or unified handling.",
-        "catalog_score": 0.85,
-        "raw_search_score": 0,
-        "weak_overall_coverage": false,
+        "node_id": "analysis-router",
+        "node_label": "Analysis Type Router",
+        "decision": "build",
+        "agent_id": null,
+        "agent_name": null,
+        "rationale": "catalog match Pipeline Intent Classifier (pipeline_intent_classifier) has no seedable package in agent library",
+        "catalog_score": null,
         "required_capability": "routing"
       },
       {
-        "node_id": "document-retrieval",
-        "node_label": "Access-Aware Document Retrieval",
-        "decision": "reuse",
-        "agent_id": "eryl_semantic_rag_agent_chain",
-        "agent_name": "Eryl Semantic RAG Agent Chain",
-        "rationale": "This agent already provides document retrieval over indexed enterprise content and fits the approved-document evidence path.",
-        "catalog_score": 0.9,
-        "raw_search_score": 0,
-        "weak_overall_coverage": false,
-        "required_capability": "retrieval"
-      },
-      {
-        "node_id": "sql-query-chain",
-        "node_label": "Access-Aware SQL Generation and Execution",
+        "node_id": "sql-answering",
+        "node_label": "SQL Answering Chain",
         "decision": "reuse",
         "agent_id": "quin_sql_agent_chain",
         "agent_name": "Quin SQL Agent Chain",
-        "rationale": "This chain explicitly supports SQL generation and execution against approved tables, matching the structured evidence path.",
-        "catalog_score": 0.85,
-        "raw_search_score": 0,
-        "weak_overall_coverage": false,
+        "rationale": "matched Quin SQL Agent Chain",
+        "catalog_score": 0.35,
         "required_capability": "sql_generation"
       },
       {
+        "node_id": "document-retrieval",
+        "node_label": "Document Retrieval Chain",
+        "decision": "adapt",
+        "agent_id": "eryl_semantic_rag_agent_chain",
+        "agent_name": "Eryl Semantic RAG Agent Chain",
+        "rationale": "matched Eryl Semantic RAG Agent Chain",
+        "catalog_score": 0.95,
+        "required_capability": "retrieval"
+      },
+      {
         "node_id": "evidence-reconciliation",
-        "node_label": "Evidence Normalization and Reconciliation",
+        "node_label": "Evidence Reconciliation & Confidence Gate",
         "decision": "build",
         "agent_id": null,
         "agent_name": null,
-        "rationale": "No catalog agent exposes evidence_reconciliation capability, so a custom merge layer is needed to normalize SQL and document outputs.",
-        "catalog_score": 0,
-        "raw_search_score": null,
-        "weak_overall_coverage": false,
+        "rationale": "catalog match Evidence Checker (evidence_checker) has no seedable package in agent library",
+        "catalog_score": null,
         "required_capability": "evidence_reconciliation"
       },
       {
-        "node_id": "conflict-detection",
-        "node_label": "Conflict Detection Across Sources",
+        "node_id": "answer-quality-eval",
+        "node_label": "Answer Quality Evaluation",
         "decision": "build",
         "agent_id": null,
         "agent_name": null,
-        "rationale": "Conflict detection is a required trust feature and no catalog match includes conflict_detection capability.",
-        "catalog_score": 0,
-        "raw_search_score": null,
-        "weak_overall_coverage": false,
-        "required_capability": "conflict_detection"
-      },
-      {
-        "node_id": "answer-consolidation",
-        "node_label": "Grounded Answer Synthesis with Citations",
-        "decision": "reuse",
-        "agent_id": "final_answer_consolidation_agent",
-        "agent_name": "Final Answer Consolidation Agent",
-        "rationale": "This agent is the best direct fit for composing a single grounded response from multiple evidence streams.",
-        "catalog_score": 0.85,
-        "raw_search_score": 0,
-        "weak_overall_coverage": false,
-        "required_capability": "answer_consolidation"
-      },
-      {
-        "node_id": "evidence-sufficiency-gate",
-        "node_label": "Evidence Sufficiency and Refusal Gate",
-        "decision": "build",
-        "agent_id": null,
-        "agent_name": null,
-        "rationale": "A custom gateway is needed to enforce refusal behavior based on evidence sufficiency because no catalog agent provides quality_evaluation.",
-        "catalog_score": 0,
-        "raw_search_score": null,
-        "weak_overall_coverage": false,
+        "rationale": "catalog match Evidence Checker (evidence_checker) has no seedable package in agent library",
+        "catalog_score": null,
         "required_capability": "quality_evaluation"
       },
       {
-        "node_id": "response-delivery",
-        "node_label": "Response Delivery to Analyst",
-        "decision": "reuse",
-        "agent_id": "final_answer_rewriter",
-        "agent_name": "Final Answer Rewriter",
-        "rationale": "This agent can format the approved answer or refusal into concise user-facing chatbot text without introducing unsupported content.",
-        "catalog_score": 0.85,
-        "raw_search_score": 0,
-        "weak_overall_coverage": false,
+        "node_id": "final-answer",
+        "node_label": "Final Natural-Language Answer",
+        "decision": "build",
+        "agent_id": null,
+        "agent_name": null,
+        "rationale": "catalog match Final Answer Consolidation Agent (final_answer_consolidation_agent) has no seedable package in agent library",
+        "catalog_score": null,
         "required_capability": "answer_consolidation"
       }
     ],
     "catalog_matches": [
       {
+        "agent_id": "text_to_sql_analytics_agent",
+        "name": "Text-to-SQL Analytics Agent",
+        "score": 0.95,
+        "capabilities": [],
+        "category": "Document & Data",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Affine Horizontal Agents",
+        "function_summary": "Translates a natural-language analytics question into a validated SQL query, runs it against the target database, and returns the result set with a short explanation.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
         "agent_id": "eryl_semantic_rag_agent_chain",
         "name": "Eryl Semantic RAG Agent Chain",
+        "score": 0.95,
+        "capabilities": [
+          "retrieval",
+          "document_qa"
+        ],
         "category": "Document & Data",
         "origin_client": "Mars",
         "origin_project": "Mars Sales Genie (Copilot) / Unified View",
         "function_summary": "Retrieves and answers from indexed retail policy and unstructured documents (Chocolate_Confectionery_Retail_Policy.docx, emails, guidelines) using Azure AI Search vector + semantic retrieval.",
-        "score": 0.9,
-        "raw_search_score": 0,
-        "weak_overall_coverage": false,
-        "matched_for": "capability_slot:document_retrieval",
-        "capabilities": [
-          "retrieval",
-          "document_qa"
-        ]
-      },
-      {
-        "agent_id": "graphrag_index_query_agent",
-        "name": "GraphRAG Index & Query Agent",
-        "category": "Document & Data",
-        "origin_client": "JPMorgan Chase (JPMC)",
-        "origin_project": "JPMC KYC Risk Pre-Screening",
-        "function_summary": "Indexes per-project KYC documents into a knowledge graph with entity/community extraction and embeddings; answers analyst questions via local, global, drift, or basic search methods.",
-        "score": 0.86,
-        "raw_search_score": 0,
-        "weak_overall_coverage": false,
-        "matched_for": "capability_slot:document_retrieval",
-        "capabilities": [
-          "retrieval",
-          "indexing"
-        ]
+        "inputs": [
+          "semantic_question",
+          "Vector_Data routing hints"
+        ],
+        "outputs": [
+          "retrieval-grounded answer",
+          "Semantic-based analysis_type"
+        ],
+        "matched_for": "User submits question through chat UI, Intent classifier determines whether the ",
+        "status": "available"
       },
       {
         "agent_id": "final_answer_consolidation_agent",
         "name": "Final Answer Consolidation Agent",
+        "score": 0.95,
+        "capabilities": [
+          "answer_consolidation"
+        ],
         "category": "Sales & Revenue",
         "origin_client": "Affine Analytics",
         "origin_project": "Merchandising Vision Agent",
         "function_summary": "Consolidates count and generic row-level analyses into a single natural-language answer based on task_type routing.",
-        "score": 0.85,
-        "raw_search_score": 0,
-        "weak_overall_coverage": false,
-        "matched_for": "capability_slot:answer_synthesis",
-        "capabilities": [
-          "answer_consolidation"
-        ]
+        "inputs": [
+          "User query",
+          "intermediate JSON with count_analysis and generic_analysis"
+        ],
+        "outputs": [
+          "final_answer",
+          "reasoning",
+          "user_query"
+        ],
+        "matched_for": "Provide a single internal chatbot that routes questions to the right data path, ",
+        "status": "available"
       },
       {
-        "agent_id": "pipeline_intent_classifier",
-        "name": "Pipeline Intent Classifier",
+        "agent_id": "rag_document_retriever",
+        "name": "RAG Document Retriever",
+        "score": 0.8075,
+        "capabilities": [],
         "category": "Document & Data",
-        "origin_client": "Mars",
-        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
-        "function_summary": "Classifies each user question into vision_only, vision_then_unified, or unified_only and flags multi-shelf comparisons for SQL-only routing.",
-        "score": 0.85,
-        "raw_search_score": 0,
-        "weak_overall_coverage": false,
-        "matched_for": "capability_slot:intent_routing",
-        "capabilities": [
-          "routing"
-        ]
+        "origin_client": "Affine Analytics",
+        "origin_project": "Affine Horizontal Agents",
+        "function_summary": "Retrieves the most relevant passages from an indexed document corpus for a user query, returning ranked chunks with source citations for grounded answering.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "User submits question through chat UI \u2192 Intent classifier determines whether the",
+        "status": "available"
       },
       {
-        "agent_id": "quin_sql_agent_chain",
-        "name": "Quin SQL Agent Chain",
-        "category": "Sales & Revenue",
-        "origin_client": "Mars",
-        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
-        "function_summary": "AutoGen multi-agent chain that generates, executes, and critiques SQL Server queries on mars schema tables (Mars_Sales_Data, shelf_visit, retail_planogram_stocks, etc.) and returns structured sales/inventory insights.",
-        "score": 0.85,
-        "raw_search_score": 0,
-        "weak_overall_coverage": false,
-        "matched_for": "capability_slot:structured_sql",
-        "capabilities": [
-          "sql_generation",
-          "sql_execution"
-        ]
+        "agent_id": "answer_summarizer",
+        "name": "Answer Summarizer",
+        "score": 0.5834187499999999,
+        "capabilities": [],
+        "category": "Document & Data",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Affine Horizontal Agents",
+        "function_summary": "Condenses retrieved context, long documents, or transcripts into a concise grounded answer or summary, citing the supporting sources.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
       },
       {
         "agent_id": "final_answer_rewriter",
         "name": "Final Answer Rewriter",
+        "score": 0.5834187499999999,
+        "capabilities": [
+          "answer_consolidation"
+        ],
         "category": "Document & Data",
         "origin_client": "Mars",
         "origin_project": "Mars Sales Genie (Copilot) / Unified View",
         "function_summary": "Post-processes combined vision+SQL+semantic draft answers into concise structured user-facing text without adding new facts.",
-        "score": 0.85,
-        "raw_search_score": 0,
-        "weak_overall_coverage": false,
-        "matched_for": "capability_slot:answer_synthesis",
-        "capabilities": [
-          "answer_consolidation"
-        ]
-      }
-    ],
-    "summary_markdown": "This architecture implements a grounded hybrid QA chatbot for business analysts using a true parallel orchestration model: after intake and routing, the flow fans out into document retrieval and SQL generation/execution simultaneously, then rejoins for evidence reconciliation, conflict detection, answer synthesis, sufficiency gating, and response delivery. Because the spec requires answers to combine approved enterprise documents and structured tables without relying on general model knowledge, the design keeps all reasoning anchored to retrieved passages and executed query results.\n\nThe strongest reuse opportunities come from the Affine catalog: Pipeline Intent Classifier handles routing, Eryl Semantic RAG Agent Chain covers document retrieval, Quin SQL Agent Chain covers structured query generation/execution, Final Answer Consolidation Agent synthesizes the grounded response, and Final Answer Rewriter formats the final chatbot output. This yields 5 of 9 nodes as catalog reuse, satisfying the catalog-first requirement while preserving a clean left-to-right graph. Custom build is reserved only for capabilities not present in the catalog: intake, evidence reconciliation, conflict detection, and the evidence sufficiency/refusal gate.\n\nNo human-in-the-loop step is included because the spec explicitly states that analysts should be served directly and unsupported questions should be refused rather than routed for manual review. Key implementation risk areas are access-aware enforcement across both retrieval paths, robust normalization of heterogeneous SQL and document evidence, and precise refusal logic so the system declines unsupported questions instead of hallucinating. If document indexing is not already available in the target environment, GraphRAG Index & Query Agent could be added in a future phase as a preprocessing/index maintenance component, but it is not required in the runtime graph as currently specified.",
-    "open_questions": [
-      "Are enterprise documents already indexed and access-filtered, or should a separate indexing pipeline be added before runtime retrieval?",
-      "Should the SQL path support only read-only approved views, or can it query broader warehouse tables under row-level security?",
-      "What citation format is required in the chatbot response for document passages versus SQL-derived facts?",
-      "What threshold or policy defines evidence sufficiency for refusal when only one source returns support but the other is silent?"
-    ],
-    "validation": {
-      "overall": "warn",
-      "pass_count": 13,
-      "warn_count": 5,
-      "fail_count": 0,
-      "structural_fail_count": 0,
-      "unresolved_actionable_count": 5,
-      "can_approve": false,
-      "approval_hint": "5 issue(s) still need a fix or review.",
-      "items": [
-        {
-          "level": "pass",
-          "code": "has_nodes",
-          "message": "Graph has 9 components and 9 connections.",
-          "node_id": null,
-          "finding_id": "has_nodes:_",
-          "finding_key": "has_nodes:_",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "build_ok",
-          "message": "Custom build for 'User Question Intake' \u2014 confirm no catalog alternative.",
-          "node_id": "user-question-intake",
-          "finding_id": "build_ok:user-question-intake",
-          "finding_key": "build_ok:user-question-intake",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "catalog_fit",
-          "message": "Catalog agent 'Pipeline Intent Classifier' aligns with this step.",
-          "node_id": "question-routing",
-          "finding_id": "catalog_fit:question-routing",
-          "finding_key": "catalog_fit:question-routing",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "catalog_fit",
-          "message": "Catalog agent 'Eryl Semantic RAG Agent Chain' aligns with this step.",
-          "node_id": "document-retrieval",
-          "finding_id": "catalog_fit:document-retrieval",
-          "finding_key": "catalog_fit:document-retrieval",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "catalog_fit",
-          "message": "Catalog agent 'Quin SQL Agent Chain' aligns with this step.",
-          "node_id": "sql-query-chain",
-          "finding_id": "catalog_fit:sql-query-chain",
-          "finding_key": "catalog_fit:sql-query-chain",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "build_ok",
-          "message": "Custom build for 'Evidence Normalization and Reconciliation' \u2014 confirm no catalog alternative.",
-          "node_id": "evidence-reconciliation",
-          "finding_id": "build_ok:evidence-reconciliation",
-          "finding_key": "build_ok:evidence-reconciliation",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "build_ok",
-          "message": "Custom build for 'Conflict Detection Across Sources' \u2014 confirm no catalog alternative.",
-          "node_id": "conflict-detection",
-          "finding_id": "build_ok:conflict-detection",
-          "finding_key": "build_ok:conflict-detection",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "catalog_fit",
-          "message": "Catalog agent 'Final Answer Consolidation Agent' aligns with this step.",
-          "node_id": "answer-consolidation",
-          "finding_id": "catalog_fit:answer-consolidation",
-          "finding_key": "catalog_fit:answer-consolidation",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "build_ok",
-          "message": "Custom build for 'Evidence Sufficiency and Refusal Gate' \u2014 confirm no catalog alternative.",
-          "node_id": "evidence-sufficiency-gate",
-          "finding_id": "build_ok:evidence-sufficiency-gate",
-          "finding_key": "build_ok:evidence-sufficiency-gate",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "catalog_fit",
-          "message": "Catalog agent 'Final Answer Rewriter' aligns with this step.",
-          "node_id": "response-delivery",
-          "finding_id": "catalog_fit:response-delivery",
-          "finding_key": "catalog_fit:response-delivery",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "warn",
-          "code": "hitl_missing",
-          "message": "Spec requires human-in-the-loop but no 'human' step appears on the graph.",
-          "node_id": null,
-          "finding_id": "hitl_missing:_",
-          "finding_key": "hitl_missing:_",
-          "blocks_approval": false,
-          "help_text": "Add a human approval step or acknowledge HITL is external.",
-          "remediations": [
-            {
-              "id": "add_human_step",
-              "label": "Add human approval step",
-              "description": "Insert an analyst review node into the flow.",
-              "finding_id": "hitl_missing:_",
-              "action": "add_human_node",
-              "node_id": null,
-              "decision": null,
-              "agent_id": null,
-              "agent_name": null,
-              "catalog_score": null,
-              "gateway_label": null,
-              "question_text": null,
-              "edge_from": null,
-              "edge_to": null
-            },
-            {
-              "id": "acknowledge_hitl",
-              "label": "HITL handled outside diagram",
-              "description": "Human review happens in another system.",
-              "finding_id": "hitl_missing:_",
-              "action": "acknowledge",
-              "node_id": null,
-              "decision": null,
-              "agent_id": null,
-              "agent_name": null,
-              "catalog_score": null,
-              "gateway_label": null,
-              "question_text": null,
-              "edge_from": null,
-              "edge_to": null
-            }
-          ],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "use_case_aligned",
-          "message": "Architecture text overlaps with stated use case.",
-          "node_id": null,
-          "finding_id": "use_case_aligned:_",
-          "finding_key": "use_case_aligned:_",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "flow_documented",
-          "message": "Architectural flow was confirmed in the interview \u2014 compare visually to canvas.",
-          "node_id": null,
-          "finding_id": "flow_documented:_",
-          "finding_key": "flow_documented:_",
-          "blocks_approval": false,
-          "help_text": "Validation checks structure and spec overlap, not full business correctness.",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "warn",
-          "code": "open_question",
-          "message": "Are enterprise documents already indexed and access-filtered, or should a separate indexing pipeline be added before runtime retrieval?",
-          "node_id": null,
-          "finding_id": "open_question:0",
-          "finding_key": "open_question:0",
-          "blocks_approval": false,
-          "help_text": "Resolve or acknowledge open planning questions.",
-          "remediations": [
-            {
-              "id": "resolve_question",
-              "label": "Mark question resolved",
-              "description": "Remove this open question from the plan.",
-              "finding_id": "open_question:0",
-              "action": "remove_open_question",
-              "node_id": null,
-              "decision": null,
-              "agent_id": null,
-              "agent_name": null,
-              "catalog_score": null,
-              "gateway_label": null,
-              "question_text": "Are enterprise documents already indexed and access-filtered, or should a separate indexing pipeline be added before runtime retrieval?",
-              "edge_from": null,
-              "edge_to": null
-            },
-            {
-              "id": "keep_question",
-              "label": "Keep tracking this question",
-              "description": "Leave open; acknowledge you are aware.",
-              "finding_id": "open_question:0",
-              "action": "acknowledge",
-              "node_id": null,
-              "decision": null,
-              "agent_id": null,
-              "agent_name": null,
-              "catalog_score": null,
-              "gateway_label": null,
-              "question_text": null,
-              "edge_from": null,
-              "edge_to": null
-            }
-          ],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "warn",
-          "code": "open_question",
-          "message": "Should the SQL path support only read-only approved views, or can it query broader warehouse tables under row-level security?",
-          "node_id": null,
-          "finding_id": "open_question:1",
-          "finding_key": "open_question:1",
-          "blocks_approval": false,
-          "help_text": "Resolve or acknowledge open planning questions.",
-          "remediations": [
-            {
-              "id": "resolve_question",
-              "label": "Mark question resolved",
-              "description": "Remove this open question from the plan.",
-              "finding_id": "open_question:1",
-              "action": "remove_open_question",
-              "node_id": null,
-              "decision": null,
-              "agent_id": null,
-              "agent_name": null,
-              "catalog_score": null,
-              "gateway_label": null,
-              "question_text": "Should the SQL path support only read-only approved views, or can it query broader warehouse tables under row-level security?",
-              "edge_from": null,
-              "edge_to": null
-            },
-            {
-              "id": "keep_question",
-              "label": "Keep tracking this question",
-              "description": "Leave open; acknowledge you are aware.",
-              "finding_id": "open_question:1",
-              "action": "acknowledge",
-              "node_id": null,
-              "decision": null,
-              "agent_id": null,
-              "agent_name": null,
-              "catalog_score": null,
-              "gateway_label": null,
-              "question_text": null,
-              "edge_from": null,
-              "edge_to": null
-            }
-          ],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "warn",
-          "code": "open_question",
-          "message": "What citation format is required in the chatbot response for document passages versus SQL-derived facts?",
-          "node_id": null,
-          "finding_id": "open_question:2",
-          "finding_key": "open_question:2",
-          "blocks_approval": false,
-          "help_text": "Resolve or acknowledge open planning questions.",
-          "remediations": [
-            {
-              "id": "resolve_question",
-              "label": "Mark question resolved",
-              "description": "Remove this open question from the plan.",
-              "finding_id": "open_question:2",
-              "action": "remove_open_question",
-              "node_id": null,
-              "decision": null,
-              "agent_id": null,
-              "agent_name": null,
-              "catalog_score": null,
-              "gateway_label": null,
-              "question_text": "What citation format is required in the chatbot response for document passages versus SQL-derived facts?",
-              "edge_from": null,
-              "edge_to": null
-            },
-            {
-              "id": "keep_question",
-              "label": "Keep tracking this question",
-              "description": "Leave open; acknowledge you are aware.",
-              "finding_id": "open_question:2",
-              "action": "acknowledge",
-              "node_id": null,
-              "decision": null,
-              "agent_id": null,
-              "agent_name": null,
-              "catalog_score": null,
-              "gateway_label": null,
-              "question_text": null,
-              "edge_from": null,
-              "edge_to": null
-            }
-          ],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "warn",
-          "code": "open_question",
-          "message": "What threshold or policy defines evidence sufficiency for refusal when only one source returns support but the other is silent?",
-          "node_id": null,
-          "finding_id": "open_question:3",
-          "finding_key": "open_question:3",
-          "blocks_approval": false,
-          "help_text": "Resolve or acknowledge open planning questions.",
-          "remediations": [
-            {
-              "id": "resolve_question",
-              "label": "Mark question resolved",
-              "description": "Remove this open question from the plan.",
-              "finding_id": "open_question:3",
-              "action": "remove_open_question",
-              "node_id": null,
-              "decision": null,
-              "agent_id": null,
-              "agent_name": null,
-              "catalog_score": null,
-              "gateway_label": null,
-              "question_text": "What threshold or policy defines evidence sufficiency for refusal when only one source returns support but the other is silent?",
-              "edge_from": null,
-              "edge_to": null
-            },
-            {
-              "id": "keep_question",
-              "label": "Keep tracking this question",
-              "description": "Leave open; acknowledge you are aware.",
-              "finding_id": "open_question:3",
-              "action": "acknowledge",
-              "node_id": null,
-              "decision": null,
-              "agent_id": null,
-              "agent_name": null,
-              "catalog_score": null,
-              "gateway_label": null,
-              "question_text": null,
-              "edge_from": null,
-              "edge_to": null
-            }
-          ],
-          "resolved": false,
-          "resolution": null
-        },
-        {
-          "level": "pass",
-          "code": "validation_scope",
-          "message": "Automated checks cover structure, catalog ids, and spec overlap \u2014 not full business proof.",
-          "node_id": null,
-          "finding_id": "validation_scope:_",
-          "finding_key": "validation_scope:_",
-          "blocks_approval": false,
-          "help_text": "",
-          "remediations": [],
-          "resolved": false,
-          "resolution": null
-        }
-      ],
-      "node_status": {
-        "user-question-intake": "pass",
-        "question-routing": "pass",
-        "document-retrieval": "pass",
-        "sql-query-chain": "pass",
-        "evidence-reconciliation": "pass",
-        "conflict-detection": "pass",
-        "answer-consolidation": "pass",
-        "evidence-sufficiency-gate": "pass",
-        "response-delivery": "pass"
-      }
-    },
-    "validation_resolutions": {},
-    "architecture_approved": false,
-    "node_explanations": {
-      "user-question-intake": {
-        "purpose": "Capture the analyst's natural-language question and session context as the trusted starting point for the workflow.",
-        "role_in_workflow": "This is the entry step where the chatbot receives the user's request, identity, and any session metadata needed for downstream access-aware processing. It establishes the exact question that will be routed into document retrieval, SQL querying, or both.",
-        "why_it_exists": "This node is built rather than reused because no catalog component provides the intake capability for the chatbot entrypoint. A custom intake layer is needed to reliably pass user text and context into the grounded pipeline without adding any model-generated interpretation too early.",
-        "consumes_from": [],
-        "feeds_into": [
-          "Question Understanding and Intent Routing",
-          "user question and session context"
+        "inputs": [
+          "original question",
+          "draft answer"
         ],
-        "chat_relationship": "The user asked for a database + document chatbot for business analysts, so the workflow needs a front door that accepts analyst questions directly from the chatbot UI.",
-        "execution_summary": "Receives the analyst's question and session context from the chatbot interface."
+        "outputs": [
+          "final_answer_text"
+        ],
+        "matched_for": "User submits question through chat UI \u2192 Intent classifier determines whether the",
+        "status": "available"
       },
-      "question-routing": {
-        "purpose": "Determine whether the question needs document evidence, database evidence, or both, and route it accordingly.",
-        "role_in_workflow": "After intake, this step interprets the user's request and decides which grounded evidence paths should run. It can trigger the document retrieval path, the SQL path, or both in parallel so the system can produce one combined answer.",
-        "why_it_exists": "This node reuses the Pipeline Intent Classifier because it is a strong catalog match for routing questions into the right downstream pipelines. The routing step is essential because the user explicitly wanted one chatbot that can combine documents and tables in the same response rather than forcing a single-source path.",
+      {
+        "agent_id": "shelf_understanding_agent",
+        "name": "Shelf Understanding Agent",
+        "score": 0.4959059374999999,
+        "capabilities": [
+          "visual_qa"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Merchandising Vision Agent",
+        "function_summary": "Answers descriptive, price, promotion, and stock-out questions from cropped row images and full shelf context.",
+        "inputs": [
+          "User query",
+          "Cropped row images",
+          "Optional original shelf image for price/promo queries"
+        ],
+        "outputs": [
+          "answer and reasoning per row"
+        ],
+        "matched_for": "Provide a single internal chatbot that routes questions to the right data path, ",
+        "status": "available"
+      },
+      {
+        "agent_id": "web_research_agent",
+        "name": "Web Research Agent",
+        "score": 0.42152004687499994,
+        "capabilities": [],
+        "category": "Document & Data",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Affine Horizontal Agents",
+        "function_summary": "Searches the public web for a question, reads the top results, and returns a synthesized answer with linked sources.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Provide a single internal chatbot that routes questions to the right data path, ",
+        "status": "available"
+      },
+      {
+        "agent_id": "intent_classifier_router",
+        "name": "Intent Classifier & Router",
+        "score": 0.42152004687499994,
+        "capabilities": [],
+        "category": "Document & Data",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Affine Horizontal Agents",
+        "function_summary": "Classifies an incoming request into one of a configurable set of intents and routes it to the correct downstream branch or agent.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "User submits question through chat UI, Intent classifier determines whether the ",
+        "status": "available"
+      },
+      {
+        "agent_id": "graphrag_index_query_agent",
+        "name": "GraphRAG Index & Query Agent",
+        "score": 0.35,
+        "capabilities": [
+          "retrieval",
+          "indexing"
+        ],
+        "category": "Document & Data",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening",
+        "function_summary": "Indexes per-project KYC documents into a knowledge graph with entity/community extraction and embeddings; answers analyst questions via local, global, drift, or basic search methods.",
+        "inputs": [
+          "project_id",
+          "TXT documents in projects/{id}/input/",
+          "natural language question",
+          "search method (local/global/drift/basic)"
+        ],
+        "outputs": [
+          "entities.parquet",
+          "community_reports.parquet",
+          "LanceDB embeddings",
+          "natural language answer text"
+        ],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "graphrag-index-query-pipeline",
+        "name": "GraphRAG Index & Query Pipeline",
+        "score": 0.35,
+        "capabilities": [],
+        "category": "Document & Data",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening (UBO GraphRAG)",
+        "function_summary": "Converts project documents to text, indexes a per-project knowledge graph with entities, communities, and embeddings, and answers analyst questions. It takes project documents plus a query string and search method as input and returns index artifacts and natural-language answers.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "document-ingestion-agent",
+        "name": "Document Ingestion Agent",
+        "score": 0.35,
+        "capabilities": [],
+        "category": "Document & Data",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening (UBO GraphRAG)",
+        "function_summary": "Corporate KYC document ingestion entry point: accepts uploaded PDF, DOCX, TXT, or XLSX via file path or blob storage, detects file type, extracts and normalizes text (with OCR for scanned PDFs), chunks content, and emits document_id and text_content for downstream entity extraction and policy valida",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "pipeline_intent_classifier",
+        "name": "Pipeline Intent Classifier",
+        "score": 0.35,
+        "capabilities": [
+          "routing"
+        ],
+        "category": "Document & Data",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "Classifies each user question into vision_only, vision_then_unified, or unified_only and flags multi-shelf comparisons for SQL-only routing.",
+        "inputs": [
+          "question",
+          "has_image"
+        ],
+        "outputs": [
+          "mode",
+          "run_vision_pipeline",
+          "reason",
+          "shelf_comparison_sql_route"
+        ],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "quin_sql_agent_chain",
+        "name": "Quin SQL Agent Chain",
+        "score": 0.35,
+        "capabilities": [
+          "sql_generation",
+          "sql_execution"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "AutoGen multi-agent chain that generates, executes, and critiques SQL Server queries on mars schema tables (Mars_Sales_Data, shelf_visit, retail_planogram_stocks, etc.) and returns structured sales/inventory insights.",
+        "inputs": [
+          "sql_question",
+          "SQL_Meta_Data schema",
+          "optional vision_context block"
+        ],
+        "outputs": [
+          "sql_query results",
+          "SQL-based narrative answer",
+          "analysis_type SQL-based"
+        ],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "semantic_image_search_validator",
+        "name": "Semantic Image Search & Validator",
+        "score": 0.35,
+        "capabilities": [
+          "vector_search",
+          "image_validation"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Merchandising Vision Agent",
+        "function_summary": "Embeds text queries with Azure AI Vision, retrieves similar shelf images from Azure AI Search, and filters results with GPT vision relevance scoring.",
+        "inputs": [
+          "Natural-language search query",
+          "Azure Blob image corpus"
+        ],
+        "outputs": [
+          "validated_results with blob_name, sas_url, gpt_reason, @search.score"
+        ],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "main_entity_inference_agent",
+        "name": "Main Entity Inference Agent",
+        "score": 0.35,
+        "capabilities": [
+          "entity_resolution"
+        ],
+        "category": "Document & Data",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening",
+        "function_summary": "Infers the primary corporate entity described in a project's latest document to center the radial ownership visualization.",
+        "inputs": [
+          "document bytes",
+          "filename",
+          "candidate entity names from SQL"
+        ],
+        "outputs": [
+          "entity_id",
+          "entity_name",
+          "reason"
+        ],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "entity-extraction-agent",
+        "name": "Entity Extraction Agent",
+        "score": 0.35,
+        "capabilities": [],
+        "category": "Document & Data",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening (UBO GraphRAG)",
+        "function_summary": "Extracts entities, ownership relationships, and UBO registry records from uploaded corporate KYC documents into structured JSON for SQL persistence.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "email_message_drafter",
+        "name": "Email & Message Drafter",
+        "score": 0.35,
+        "capabilities": [],
+        "category": "Document & Data",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Affine Horizontal Agents",
+        "function_summary": "Drafts professional outbound emails or chat messages from a brief, context, and tone, ready for human review before sending.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "planogram-vision-llm-suite",
+        "name": "Planogram Vision LLM Suite",
+        "score": 0.35,
+        "capabilities": [],
+        "category": "Quality & Compliance",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "Azure OpenAI vision functions for shelf-level product extraction, row counting, generic row description, daily KPI JSON, and final natural-language shelf answers after Roboflow cropping.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "generation-prompt-author-v2-1-0",
+        "name": "Generation Prompt Author",
+        "score": 0.35,
+        "capabilities": [],
+        "category": "Sales & Revenue",
+        "origin_client": "Staples",
+        "origin_project": "Aira (CreAItive Studio)",
+        "function_summary": "Azure vision+text agent that writes per-PDP-image-type multimodal prompts (or per-role directives) from reference photos and PDF excerpts before image generation.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "risk_reasoning_generator",
+        "name": "Risk Reasoning Generator",
+        "score": 0.35,
+        "capabilities": [
+          "explanation_generation"
+        ],
+        "category": "Quality & Compliance",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening",
+        "function_summary": "Generates explainable AI narratives for the final risk score and each of four risk dimensions (Geography, Ownership, Industry, Sanctions) for UI display and DOCX reports.",
+        "inputs": [
+          "project_id",
+          "section_scores_0_100",
+          "final_score",
+          "final_tier",
+          "engineered feature summary"
+        ],
+        "outputs": [
+          "final_reasoning (UI paragraph)",
+          "report_reasoning (geography, ownership_structure, industry_type, sanctions, final_summary)"
+        ],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "generation_prompt_author",
+        "name": "Generation Prompt Author",
+        "score": 0.35,
+        "capabilities": [
+          "prompt_generation"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Staples",
+        "origin_project": "Aira (CreAItive Studio)",
+        "function_summary": "Azure vision+text agent that writes per-PDP-image-type multimodal prompts (or per-role directives) from reference photos and PDF excerpts before image generation.",
+        "inputs": [
+          "Reference product images (up to 4)",
+          "image_types[]",
+          "User prompt text",
+          "Product spec PDF excerpt",
+          "Guardrails PDF excerpt"
+        ],
+        "outputs": [
+          "JSON prompts per image type",
+          "Optional role_directives map for template fallback"
+        ],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "missing_information_email_drafter",
+        "name": "Missing Information Email Drafter",
+        "score": 0.35,
+        "capabilities": [],
+        "category": "Quality & Compliance",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening (UBO GraphRAG)",
+        "function_summary": "Drafts professional client-facing emails requesting missing KYC details with structured bullet lists and Compliance Team sign-off.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "kyc_risk_report_generator",
+        "name": "KYC Risk Report Generator",
+        "score": 0.35,
+        "capabilities": [
+          "report_generation"
+        ],
+        "category": "Quality & Compliance",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening",
+        "function_summary": "Generates downloadable Word (.docx) KYC risk assessment reports with KPI summary table, section scores, UBO details, override status, and AI reasoning narratives.",
+        "inputs": [
+          "risk_assessment_summary.json payload",
+          "entities, ubos, relationships from Azure SQL"
+        ],
+        "outputs": [
+          "KYC_Risk_Report_{project}.docx binary"
+        ],
+        "matched_for": "Internal employees need a chatbot that can answer analyst-style questions by com",
+        "status": "available"
+      },
+      {
+        "agent_id": "policy_schema_validator",
+        "name": "Policy & Schema Validator",
+        "score": 0.35,
+        "capabilities": [],
+        "category": "Document & Data",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Affine Horizontal Agents",
+        "function_summary": "Validates extracted or submitted data against a configurable policy or schema, blocking incomplete or non-compliant payloads and listing the specific gaps.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Provide a single internal chatbot that routes questions to the right data path, ",
+        "status": "available"
+      },
+      {
+        "agent_id": "ml-risk-classifier-rule-stub",
+        "name": "ML Risk Classifier (Rule Stub)",
+        "score": 0.35,
+        "capabilities": [],
+        "category": "Quality & Compliance",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening (UBO GraphRAG)",
+        "function_summary": "Classifies a preliminary Low, Medium, or High risk tier from engineered KYC risk features before weighted scoring. It takes geographic, industry, ownership, PEP, sanctions, and circular ownership features as input and returns a risk tier with confidence.",
+        "inputs": [],
+        "outputs": [],
+        "matched_for": "Provide a single internal chatbot that routes questions to the right data path, ",
+        "status": "available"
+      },
+      {
+        "agent_id": "executive_action_card_writer",
+        "name": "Executive Action Card Writer",
+        "score": 0.35,
+        "capabilities": [
+          "content_generation"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "Generates short action-oriented title and subtitle text for field executive promo, compliance, and recommended action cards.",
+        "inputs": [
+          "action dict with store and KPI flags"
+        ],
+        "outputs": [
+          "title",
+          "subtitle"
+        ],
+        "matched_for": "Provide a single internal chatbot that routes questions to the right data path, ",
+        "status": "available"
+      },
+      {
+        "agent_id": "ml_risk_classifier_stub",
+        "name": "ML Risk Classifier Stub",
+        "score": 0.35,
+        "capabilities": [
+          "classification"
+        ],
+        "category": "Quality & Compliance",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening",
+        "function_summary": "Rule-based classifier that assigns Low/Medium/High risk tier from engineered geographic, industry, ownership, PEP, and sanctions features.",
+        "inputs": [
+          "primary_country",
+          "fatf_country_risk_band",
+          "industry_risk_band",
+          "ownership_layers",
+          "ownership_opacity",
+          "ubo_max_ownership_pct",
+          "pep_exposure",
+          "sanctions_hits",
+          "high_risk_geo_pct",
+          "circular_ownership"
+        ],
+        "outputs": [
+          "risk_tier (Low/Medium/High)",
+          "confidence (0.74\u20130.9)"
+        ],
+        "matched_for": "Provide a single internal chatbot that routes questions to the right data path, ",
+        "status": "available"
+      },
+      {
+        "agent_id": "azure_ai_search_catalog_vector_retrieval",
+        "name": "Azure AI Search Catalog Vector Retrieval",
+        "score": 0.35,
+        "capabilities": [
+          "vector_search"
+        ],
+        "category": "Document & Data",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Affine Analytics VTO Platform",
+        "function_summary": "Maintains and queries the vto-accessories HNSW vector index for cosine-similarity ranking of catalog items from text or image-derived embeddings.",
+        "inputs": [
+          "query embedding vector",
+          "top (1-48)"
+        ],
+        "outputs": [
+          "ranked catalog documents (id, blob_name, name, category, tags)",
+          "search score"
+        ],
+        "matched_for": "User submits question through chat UI, Intent classifier determines whether the ",
+        "status": "available"
+      },
+      {
+        "agent_id": "planogram_image_semantic_search",
+        "name": "Planogram Image Semantic Search",
+        "score": 0.35,
+        "capabilities": [
+          "vector_search",
+          "image_validation"
+        ],
+        "category": "Document & Data",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "Embeds shelf images with Azure AI Vision, vector-searches Azure AI Search by supermarket, and validates matches with GPT before returning blob hits.",
+        "inputs": [
+          "natural language query",
+          "supermarket prefix"
+        ],
+        "outputs": [
+          "ranked blob images",
+          "validation reasons",
+          "SAS URLs"
+        ],
+        "matched_for": "User submits question through chat UI, Intent classifier determines whether the ",
+        "status": "available"
+      },
+      {
+        "agent_id": "executive_brief_generator_agent_chain",
+        "name": "Executive Brief Generator",
+        "score": 0.16515957995876274,
+        "capabilities": [
+          "summarization",
+          "document_understanding",
+          "pdf_extraction"
+        ],
+        "category": "Document & Data",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening",
+        "function_summary": "Turns an uploaded PDF into a one-page structured executive brief: PyMuPDF text extraction (no LLM) plus a Brief_Writer agent that returns title, key_points, executive_summary, and word_count grounded only in the source text.",
+        "inputs": [
+          "pdf_path",
+          "optional pdf_text",
+          "optional focus"
+        ],
+        "outputs": [
+          "title",
+          "key_points",
+          "executive_summary",
+          "word_count",
+          "page_count",
+          "source_pdf",
+          "within_length_bounds"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "planogram_vision_agent_chain",
+        "name": "Planogram Vision Agent Chain",
+        "score": 0.16515957995876274,
+        "capabilities": [
+          "visual_qa",
+          "counting"
+        ],
+        "category": "Quality & Compliance",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "AutoGen multi-agent vision chain that routes shelf queries to counting or generic understanding over row-crop images, then consolidates into a final natural-language shelf answer with reasoning.",
+        "inputs": [
+          "user_query",
+          "image_paths (ordered shelf-row crops)",
+          "optional initial_question alias"
+        ],
+        "outputs": [
+          "user_query",
+          "final_answer",
+          "reasoning"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "evidence_checker",
+        "name": "Evidence Checker",
+        "score": 0.16175386202065653,
+        "capabilities": [
+          "evidence_reconciliation",
+          "conflict_detection",
+          "quality_evaluation"
+        ],
+        "category": "Document & Data",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "Reconciles structured (SQL) and semantic (document) evidence, flags material conflicts, scores groundedness/completeness/faithfulness, and gates whether grounded answer synthesis may proceed.",
+        "inputs": [
+          "initial_question",
+          "analysis_type",
+          "query_answer",
+          "llm_answer",
+          "optional query",
+          "optional inference"
+        ],
+        "outputs": [
+          "conflict_detected",
+          "conflicts",
+          "evidence_strength",
+          "groundedness",
+          "completeness",
+          "faithfulness",
+          "ready_for_synthesis",
+          "next_agent",
+          "feedback"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "intake_gateway",
+        "name": "Intake Gateway",
+        "score": 0.14269544824634822,
+        "capabilities": [
+          "intake",
+          "content_safety",
+          "governance"
+        ],
+        "category": "Document & Data",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "Receives the user question, runs a deterministic Azure Content Safety-style pre-check (toxicity, PII, prompt injection), then an LLM Responsible AI agent for governance and business-rule blocking before routing or retrieval.",
+        "inputs": [
+          "question"
+        ],
+        "outputs": [
+          "initial_question",
+          "rai_check_passed",
+          "risk_score",
+          "severity",
+          "next_agent",
+          "azure_content_safety",
+          "blocked_reason"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "azure_ai_vision_catalog_embedder",
+        "name": "Azure AI Vision Catalog Embedder",
+        "score": 0.1194880298498108,
+        "capabilities": [
+          "embedding_generation"
+        ],
+        "category": "Document & Data",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Affine Analytics VTO Platform",
+        "function_summary": "Generates 1024-dimensional multimodal embeddings for catalog accessory images and natural-language search queries to power semantic garment discovery.",
+        "inputs": [
+          "image_bytes (catalog upload or index job)",
+          "text query string (semantic search)"
+        ],
+        "outputs": [
+          "embedding vector (list[float], 1024 dims)"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "document_generation",
+        "name": "PDF In-Place Instruction Updater",
+        "score": 0.11766968108291041,
+        "capabilities": [
+          "pdf_inplace_text_patch",
+          "instruction_driven_pdf_edit",
+          "deterministic_substring_replacement"
+        ],
+        "category": "Document & Data",
+        "origin_client": "Mars",
+        "origin_project": "Document Updater",
+        "function_summary": "Edits an existing PDF from natural-language change instructions via exact old\u2192new substring patches applied in-place with overlay masking (PyMuPDF). Preserves images, layout, and vectors \u2014 no rebuild, no paraphrasing, no from-scratch document authoring.",
+        "inputs": [
+          "pdf_path (existing PDF)",
+          "instruction (free-text change brief \u2014 numbered lists / multi-line prose OK; default caller shape)",
+          "optional structured [{old,new},\u2026] only as additive fast-path",
+          "optional output_pdf_path",
+          "optional json_dir for patch artifacts"
+        ],
+        "outputs": [
+          "updated_pdf_path",
+          "applied_updates (page/old/new structured diff)",
+          "proposed_updates",
+          "update_count",
+          "dispatch_output updated_pdf_and_applied_patches"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "intent_router",
+        "name": "Intent Router",
+        "score": 0.11686159857648112,
+        "capabilities": [
+          "routing"
+        ],
+        "category": "Document & Data",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "Classifies a user question into configurable analysis_type categories (SQL-based, Semantic-based, Both-dependent, Both-independent) for graph-level conditional dispatch. Emits analysis_type; does not execute Quin/Eryl handoffs.",
+        "inputs": [
+          "question",
+          "initial_question",
+          "optional analysis_types override"
+        ],
+        "outputs": [
+          "analysis_type",
+          "reason"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "competitive_shelf_intelligence_scorer",
+        "name": "Competitive Shelf Intelligence Scorer",
+        "score": 0.10878565864408424,
+        "capabilities": [
+          "competitive_analysis"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "Computes Mars visibility, competitor pressure, promo and shelf position scores from vision-extracted brand facings using weighted shelf-level rules.",
+        "inputs": [
+          "vision shelf rows with brand, facings, shelf_level"
+        ],
+        "outputs": [
+          "mars_visibility_score",
+          "competitor_pressure_score",
+          "overall_competitive_score",
+          "brand_occupancy",
+          "placement_issues"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "gpt_image_relevance_validator",
+        "name": "GPT Image Relevance Validator",
+        "score": 0.08951435925492911,
+        "capabilities": [
+          "image_validation"
+        ],
+        "category": "Document & Data",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Merchandising Vision Agent",
+        "function_summary": "Strict vision-based filter that approves or rejects blob images against a user's semantic search query.",
+        "inputs": [
+          "Image bytes",
+          "Search query string"
+        ],
+        "outputs": [
+          "relevant boolean",
+          "reason sentence",
+          "gpt_validated flag"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "pdp_compliance_checker",
+        "name": "PDP Compliance Checker",
+        "score": 0.08257978997938137,
+        "capabilities": [
+          "compliance_scoring"
+        ],
+        "category": "Quality & Compliance",
+        "origin_client": "Staples",
+        "origin_project": "Aira (CreAItive Studio)",
+        "function_summary": "Vision LLM scores a generated PDP image against guardrails-only excerpts and returns pass/fail rules, warnings, suggestions, and compliance_score 0-100.",
+        "inputs": [
+          "Generated image file",
+          "image_type",
+          "Guardrails PDF text (type-focused excerpt)",
+          "Optional supplementary policy notes"
+        ],
+        "outputs": [
+          "compliance_score",
+          "passed_rules",
+          "failed_rules",
+          "warnings",
+          "suggestions"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "risk_scoring_agent",
+        "name": "Risk Scoring Agent",
+        "score": 0.07850928662766596,
+        "capabilities": [
+          "risk_scoring"
+        ],
+        "category": "Quality & Compliance",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening",
+        "function_summary": "Aggregates geography (30), ownership (30), regulatory/sanctions (20), and industry (20) scores into a final 0\u2013100 risk score with hard override rules for FATF blacklist, sanctions, circular ownership, and PEP exposure.",
+        "inputs": [
+          "RiskFactorScores (geography_score, ownership_score, regulatory_score, industry_score)",
+          "OverrideFlags",
+          "client_summary / project_id"
+        ],
+        "outputs": [
+          "final_score (0\u2013100)",
+          "risk_tier (Low/Medium/High)",
+          "override_triggered",
+          "override_reason",
+          "reasoning text"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "gemini_image_compositor",
+        "name": "Gemini Image Compositor",
+        "score": 0.07776510597812535,
+        "capabilities": [
+          "image_generation"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Affine Analytics VTO Platform",
+        "function_summary": "Synthesizes the final virtual try-on image from person photo, accessory references, and the GPT-generated editing prompt using Gemini image output modality with aspect ratio matching and up to three retries.",
+        "inputs": [
+          "person_image (JPEG bytes)",
+          "garment_images (JPEG bytes list)",
+          "editing_prompt (string from GPT analyzer)"
+        ],
+        "outputs": [
+          "output_image_bytes",
+          "mime_type",
+          "duration_ms"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "live"
+      },
+      {
+        "agent_id": "pdp_image_generator_gemini",
+        "name": "PDP Image Generator (Gemini)",
+        "score": 0.06988565578146122,
+        "capabilities": [
+          "image_generation"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Staples",
+        "origin_project": "Aira (CreAItive Studio)",
+        "function_summary": "Generates Amazon-style PDP PNGs from reference images plus authored prompts, one variant per parallel task.",
+        "inputs": [
+          "Reference images",
+          "Per-variant prompt string",
+          "provider_id gemini-flash"
+        ],
+        "outputs": [
+          "PNG image bytes per variant",
+          "base64 images in API response"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "gpt4o_fashion_vision_analyzer",
+        "name": "GPT-4o Fashion Vision Analyzer",
+        "score": 0.05847053462046861,
+        "capabilities": [
+          "prompt_generation"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Affine Analytics VTO Platform",
+        "function_summary": "Analyzes person and garment reference images with a fashion/computational-photography system prompt and outputs a single precise image-editing instruction for virtual try-on, including layering, lighting, and full-frame preservation.",
+        "inputs": [
+          "person_image (JPEG bytes)",
+          "garment_images (1-8 JPEG bytes)",
+          "demographic (optional form field)",
+          "category (optional form field)",
+          "style_tags (optional comma-separated form field)"
+        ],
+        "outputs": [
+          "generated_prompt (string)",
+          "duration_ms",
+          "tokens_used"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "live"
+      },
+      {
+        "agent_id": "pdp_image_generator_azure_gpt_image",
+        "name": "PDP Image Generator (Azure GPT Image)",
+        "score": 0.05661385170722979,
+        "capabilities": [
+          "image_generation"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Staples",
+        "origin_project": "Aira (CreAItive Studio)",
+        "function_summary": "Azure images/edits endpoint generates PDP variants from first reference image and per-slot prompt.",
+        "inputs": [
+          "Reference image PNG",
+          "Per-variant prompt",
+          "provider_id gpt-image"
+        ],
+        "outputs": [
+          "PNG per variant via Azure base64 response"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "amazon_pdp_video_prompt_author",
+        "name": "Amazon PDP Video Prompt Author",
+        "score": 0.05008354224706334,
+        "capabilities": [
+          "video_script_generation"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Staples",
+        "origin_project": "Aira (CreAItive Studio)",
+        "function_summary": "Produces a full Amazon PDP video ad script (reference block, compliance checklist, scenes, generation prompts) from product spec, guardrails, optional user script, and reference image.",
+        "inputs": [
+          "Product spec PDF text",
+          "Guardrails PDF text",
+          "Reference image",
+          "User script_or_prompt",
+          "width x height x seconds"
+        ],
+        "outputs": [
+          "Long video generation prompt string (Sora-clamped)"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "ubo_analysis_engine",
+        "name": "UBO Analysis Engine",
+        "score": 0.04954787398762882,
+        "capabilities": [
+          "ownership_analysis"
+        ],
+        "category": "Quality & Compliance",
+        "origin_client": "JPMorgan Chase (JPMC)",
+        "origin_project": "JPMC KYC Risk Pre-Screening",
+        "function_summary": "Computes UBO-specific risk score from ownership concentration, identification transparency, structural complexity, and PEP/sanctions/geo flags.",
+        "inputs": [
+          "entities from Azure SQL",
+          "ubo_registry rows",
+          "ownership_relationships"
+        ],
+        "outputs": [
+          "ubo_analysis.score_0_100",
+          "ubo_analysis.tier",
+          "ubo_analysis.summary",
+          "ubo_analysis.metrics (total_ubos, max_ownership_pct, circular_ownership, pep_count)",
+          "ubo_analysis.top_ubos"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "roboflow_product_detector",
+        "name": "Roboflow Product Detector",
+        "score": 0.038277950117547636,
+        "capabilities": [
+          "object_detection"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Merchandising Vision Agent",
+        "function_summary": "Runs YOLO product detection on each shelf row crop and writes annotated images with per-class counts.",
+        "inputs": [
+          "Cropped row images"
+        ],
+        "outputs": [
+          "Annotated row_N.png",
+          "row_counts per class in metadata.json"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "sora_image_to_video_generator",
+        "name": "Sora Image-to-Video Generator",
+        "score": 0.03453412578549853,
+        "capabilities": [
+          "video_generation"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Staples",
+        "origin_project": "Aira (CreAItive Studio)",
+        "function_summary": "Submits image-to-video jobs to Azure Sora, polls until complete, returns MP4 for PDP video ads.",
+        "inputs": [
+          "Approved prompt (max 15000 UTF-8 bytes)",
+          "Reference image",
+          "1280x720 or 720x1280",
+          "4, 8, or 12 seconds"
+        ],
+        "outputs": [
+          "video/mp4 base64",
+          "prompt_used",
+          "meta"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "roboflow_shelf_row_detector_merchandising",
+        "name": "Roboflow Shelf Row Detector",
+        "score": 0.01971041319963609,
+        "capabilities": [
+          "object_detection"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Affine Analytics",
+        "origin_project": "Merchandising Vision Agent",
+        "function_summary": "Detects shelf rows as polygons, produces masked row crops and a polygon-overlay summary image.",
+        "inputs": [
+          "Full shelf/planogram image"
+        ],
+        "outputs": [
+          "row_N.png crops",
+          "shelf_summary.jpg"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "roboflow_shelf_row_detector_mars",
+        "name": "Roboflow Shelf Row Detector",
+        "score": 0.017471413945365305,
+        "capabilities": [
+          "object_detection"
+        ],
+        "category": "Supply Chain & Logistics",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "Segments shelf rows and detects product bounding boxes; writes cropped and annotated artifacts to Azure Blob for downstream vision LLMs.",
+        "inputs": [
+          "shelf image bytes"
+        ],
+        "outputs": [
+          "row crops",
+          "products_detected annotations",
+          "metadata.json"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      },
+      {
+        "agent_id": "mars_sales_order_simulator",
+        "name": "Mars Sales Order Simulator",
+        "score": 0.017267062892749267,
+        "capabilities": [
+          "demand_forecasting"
+        ],
+        "category": "Sales & Revenue",
+        "origin_client": "Mars",
+        "origin_project": "Mars Sales Genie (Copilot) / Unified View",
+        "function_summary": "CatBoost/sklearn regression predicts demand and realized sales under promotion, price, and stock constraints for Snickers/Mars/Twix SKUs.",
+        "inputs": [
+          "promotion_discount",
+          "price",
+          "sku_id",
+          "store_id",
+          "horizon_weeks",
+          "stock_units"
+        ],
+        "outputs": [
+          "projected units",
+          "revenue uplift",
+          "margin",
+          "order recommendation",
+          "risk flags"
+        ],
+        "matched_for": "full_catalog:Internal employees need a chatbot that can answer analyst-st",
+        "status": "available"
+      }
+    ],
+    "summary_markdown": "This architecture implements an internal-only hybrid analyst chatbot with a true parallel orchestration model: intake and safety screening, intent-based routing, structured SQL answering, document retrieval, evidence reconciliation, confidence evaluation, and final answer generation. The flow follows the provided spec closely and preserves the requirement that users receive only a concise natural-language answer, without raw evidence rows or document snippets.\n\nThe router fans out to both the SQL and document branches whenever the question requires hybrid reasoning (`Both-dependent` or `Both-independent`), satisfying the required hybrid retrieval pattern. Structured evidence is produced by the SQL chain, while document evidence is produced by the semantic RAG chain. These outputs join at a shared reconciliation step using the reusable Evidence Checker, which handles conflict detection and source-priority logic before a dedicated quality-evaluation pass determines whether the final response should include a low-confidence warning.\n\nReuse is high: all 7 processing steps use Affine catalog assets, with one light adaptation for the quality-evaluation output contract. This exceeds the catalog-first target and uses 6 distinct catalog agents across intake, routing, SQL, retrieval, validation, and delivery. No eval persistence node is included because the spec does not indicate that evaluation or audit results must be persisted.\n\nPrimary risks are capability gaps around the exact SQL agent selected and the need to configure routing labels consistently across the UI and orchestration layer. In particular, the higher-scoring `text_to_sql_analytics_agent` could not be used because its catalog capabilities are unspecified, so `quin_sql_agent_chain` is the compliant choice. Another implementation consideration is ensuring the Evidence Checker emits both merge decisions and confidence metadata in a schema the final answer agent can consume reliably.",
+    "open_questions": [
+      "Should the document corpus already be indexed, or is an explicit indexing pipeline needed outside the runtime graph?",
+      "What are the exact source-priority rules when SQL and document evidence conflict?",
+      "Should low-confidence responses include a generic disclaimer only, or a more specific warning category such as missing data versus conflicting sources?",
+      "Which structured data platform will back the SQL branch, and does it require dialect-specific query constraints?"
+    ],
+    "node_explanations": {
+      "chat-intake": {
+        "purpose": "Chat Intake & Safety Gate",
+        "role_in_workflow": "Chat Intake & Safety Gate is a agent step. Receives from Workflow entry. Passes to Analysis Type Router.",
+        "why_it_exists": "catalog match Intake Gateway (intake_gateway) has no seedable package in agent library",
         "consumes_from": [
-          "User Question Intake",
-          "user question and session context"
+          "Workflow entry"
         ],
         "feeds_into": [
-          "Access-Aware Document Retrieval",
-          "Access-Aware SQL Generation and Execution",
-          "document evidence route",
-          "structured data route"
+          "Analysis Type Router"
         ],
-        "chat_relationship": "This directly addresses the user's requirement to combine both approved documents and database tables in one answer, while still deciding when only one source type is needed.",
-        "execution_summary": "Classifies the question and routes it to the document path, SQL path, or both."
+        "chat_relationship": "Supports the user-defined workflow requirements.",
+        "execution_summary": "Receives the internal user question and performs intake prechecks before orchestration."
+      },
+      "analysis-router": {
+        "purpose": "Analysis Type Router",
+        "role_in_workflow": "Analysis Type Router is a gateway step. Receives from Chat Intake & Safety Gate. Passes to SQL Answering Chain, Document Retrieval Chain, SQL Answering Chain, Document Retrieval Chain, SQL Answering Chain, Document Retrieval Chain.",
+        "why_it_exists": "catalog match Pipeline Intent Classifier (pipeline_intent_classifier) has no seedable package in agent library",
+        "consumes_from": [
+          "Chat Intake & Safety Gate"
+        ],
+        "feeds_into": [
+          "SQL Answering Chain",
+          "Document Retrieval Chain",
+          "SQL Answering Chain",
+          "Document Retrieval Chain",
+          "SQL Answering Chain",
+          "Document Retrieval Chain"
+        ],
+        "chat_relationship": "Supports the user-defined workflow requirements.",
+        "execution_summary": "Classifies the question into SQL-based, Semantic-based, Both-dependent, or Both-independent paths."
+      },
+      "sql-answering": {
+        "purpose": "SQL Answering Chain",
+        "role_in_workflow": "SQL Answering Chain is a agent step. Receives from Analysis Type Router, Analysis Type Router, Analysis Type Router. Passes to Evidence Reconciliation & Confidence Gate, Evidence Reconciliation & Confidence Gate, Evidence Reconciliation & Confidence Gate.",
+        "why_it_exists": "matched Quin SQL Agent Chain",
+        "consumes_from": [
+          "Analysis Type Router",
+          "Analysis Type Router",
+          "Analysis Type Router"
+        ],
+        "feeds_into": [
+          "Evidence Reconciliation & Confidence Gate",
+          "Evidence Reconciliation & Confidence Gate",
+          "Evidence Reconciliation & Confidence Gate"
+        ],
+        "chat_relationship": "Supports the user-defined workflow requirements.",
+        "execution_summary": "Generates and executes SQL against structured sources to return analyst-ready structured evidence."
       },
       "document-retrieval": {
-        "purpose": "Retrieve relevant evidence passages from approved enterprise documents within the analyst's access scope.",
-        "role_in_workflow": "When the router determines that unstructured evidence is needed, this step searches the approved document corpus and returns the most relevant passages with citation metadata. Its output becomes one half of the evidence base used for the final grounded answer.",
-        "why_it_exists": "This node reuses the Eryl Semantic RAG Agent Chain because it already supports enterprise document retrieval and aligns well with the approved-document requirement. It is access-aware because the chatbot must answer only from approved data and should respect the analyst's allowed scope.",
+        "purpose": "Document Retrieval Chain",
+        "role_in_workflow": "Document Retrieval Chain is a agent step. Receives from Analysis Type Router, Analysis Type Router, Analysis Type Router. Passes to Evidence Reconciliation & Confidence Gate, Evidence Reconciliation & Confidence Gate, Evidence Reconciliation & Confidence Gate.",
+        "why_it_exists": "matched Eryl Semantic RAG Agent Chain",
         "consumes_from": [
-          "Question Understanding and Intent Routing",
-          "document evidence route"
+          "Analysis Type Router",
+          "Analysis Type Router",
+          "Analysis Type Router"
         ],
         "feeds_into": [
-          "Evidence Normalization and Reconciliation",
-          "retrieved passages with citations"
+          "Evidence Reconciliation & Confidence Gate",
+          "Evidence Reconciliation & Confidence Gate",
+          "Evidence Reconciliation & Confidence Gate"
         ],
-        "chat_relationship": "The user said the bot must answer only from approved data, so this step provides grounded document evidence instead of relying on general model knowledge.",
-        "execution_summary": "Finds relevant approved document passages and returns them with citations."
-      },
-      "sql-query-chain": {
-        "purpose": "Generate and execute constrained SQL against approved tables to produce structured evidence for the answer.",
-        "role_in_workflow": "When the router determines that structured data is needed, this step translates the user's question into safe SQL, runs it against approved tables, and returns results with provenance. Its output supplies the database-backed evidence stream that can be combined with document findings.",
-        "why_it_exists": "This node reuses the Quin SQL Agent Chain because it is the best catalog fit for SQL generation and execution over approved enterprise tables. It exists to satisfy the user's need for database-backed answers while keeping the workflow grounded in authorized structured data rather than model assumptions.",
-        "consumes_from": [
-          "Question Understanding and Intent Routing",
-          "structured data route"
-        ],
-        "feeds_into": [
-          "Evidence Normalization and Reconciliation",
-          "query results and provenance"
-        ],
-        "chat_relationship": "The user asked for a chatbot that works across database tables and documents, so this step provides the structured table evidence needed for that combined experience.",
-        "execution_summary": "Creates and runs access-controlled SQL queries to return structured evidence from approved tables."
+        "chat_relationship": "Supports the user-defined workflow requirements.",
+        "execution_summary": "Retrieves relevant indexed document content for the user question from the document corpus."
       },
       "evidence-reconciliation": {
-        "purpose": "Normalize document passages and SQL outputs into a single comparable evidence set with source metadata.",
-        "role_in_workflow": "This step sits after both retrieval branches and converts their different output formats into a common evidence structure. It prepares citations, provenance, and normalized facts so downstream conflict detection and answer synthesis can reason across sources consistently.",
-        "why_it_exists": "This node is built custom because no catalog component provides evidence reconciliation across document and SQL outputs. It is necessary because the workflow must combine both source types into one grounded answer, which requires a shared evidence representation before comparison and synthesis.",
+        "purpose": "Evidence Reconciliation & Confidence Gate",
+        "role_in_workflow": "Evidence Reconciliation & Confidence Gate is a agent step. Receives from SQL Answering Chain, Document Retrieval Chain, SQL Answering Chain, Document Retrieval Chain, SQL Answering Chain, Document Retrieval Chain. Passes to Answer Quality Evaluation.",
+        "why_it_exists": "catalog match Evidence Checker (evidence_checker) has no seedable package in agent library",
         "consumes_from": [
-          "Access-Aware Document Retrieval",
-          "Access-Aware SQL Generation and Execution",
-          "retrieved passages with citations",
-          "query results and provenance"
+          "SQL Answering Chain",
+          "Document Retrieval Chain",
+          "SQL Answering Chain",
+          "Document Retrieval Chain",
+          "SQL Answering Chain",
+          "Document Retrieval Chain"
         ],
         "feeds_into": [
-          "Conflict Detection Across Sources",
-          "normalized cross-source evidence set"
+          "Answer Quality Evaluation"
         ],
-        "chat_relationship": "Because the user wanted one combined answer from both documents and tables, this step merges those evidence streams into a unified basis for response generation.",
-        "execution_summary": "Transforms document and SQL outputs into one normalized evidence set with citations and provenance."
+        "chat_relationship": "Supports the user-defined workflow requirements.",
+        "execution_summary": "Reconciles SQL and document evidence, applies source-priority logic, and flags conflicts or weak support."
       },
-      "conflict-detection": {
-        "purpose": "Identify disagreements or mismatches between document evidence and database evidence before answering.",
-        "role_in_workflow": "Using the normalized evidence set, this step checks whether the two source types support the same conclusion or whether they diverge. It annotates conflicts so the answer can surface them explicitly instead of silently choosing one source.",
-        "why_it_exists": "This node is built custom because conflict detection is a required trust control and no catalog match covers that capability. It exists specifically to support the design choice that when documents and databases disagree, the system should show both and flag the conflict.",
+      "answer-quality-eval": {
+        "purpose": "Answer Quality Evaluation",
+        "role_in_workflow": "Answer Quality Evaluation is a agent step. Receives from Evidence Reconciliation & Confidence Gate. Passes to Final Natural-Language Answer.",
+        "why_it_exists": "catalog match Evidence Checker (evidence_checker) has no seedable package in agent library",
         "consumes_from": [
-          "Evidence Normalization and Reconciliation",
-          "normalized cross-source evidence set"
+          "Evidence Reconciliation & Confidence Gate"
         ],
         "feeds_into": [
-          "Grounded Answer Synthesis with Citations",
-          "evidence plus conflict annotations"
+          "Final Natural-Language Answer"
         ],
-        "chat_relationship": "The user explicitly said 'Show Both And Flag' when documents and database results disagree, and this is the step that makes that behavior possible.",
-        "execution_summary": "Checks the unified evidence for cross-source disagreements and adds conflict annotations."
+        "chat_relationship": "Supports the user-defined workflow requirements.",
+        "execution_summary": "Scores groundedness and completeness to determine whether a low-confidence warning is needed."
       },
-      "answer-consolidation": {
-        "purpose": "Compose a single natural-language answer grounded in the collected evidence and include citations and any conflict flags.",
-        "role_in_workflow": "After evidence has been normalized and checked for conflicts, this step turns the evidence set into one coherent response draft. It preserves source citations and conflict annotations so the answer remains transparent and evidence-backed.",
-        "why_it_exists": "This node reuses the Final Answer Consolidation Agent because it is the best available fit for combining multiple evidence streams into one response. It exists because the user wanted a single chatbot answer that can pull from both documents and tables rather than separate outputs.",
+      "final-answer": {
+        "purpose": "Final Natural-Language Answer",
+        "role_in_workflow": "Final Natural-Language Answer is a agent step. Receives from Answer Quality Evaluation. Passes to Workflow outcome.",
+        "why_it_exists": "catalog match Final Answer Consolidation Agent (final_answer_consolidation_agent) has no seedable package in agent library",
         "consumes_from": [
-          "Conflict Detection Across Sources",
-          "evidence plus conflict annotations"
+          "Answer Quality Evaluation"
         ],
         "feeds_into": [
-          "Evidence Sufficiency and Refusal Gate",
-          "draft grounded answer with citations"
+          "Workflow outcome"
         ],
-        "chat_relationship": "This directly supports the user's request for one combined answer that uses only approved data and includes evidence rather than unsupported model knowledge.",
-        "execution_summary": "Builds one cited, grounded answer draft from the reconciled evidence and conflict annotations."
-      },
-      "evidence-sufficiency-gate": {
-        "purpose": "Decide whether the drafted answer is sufficiently supported by evidence or must be refused.",
-        "role_in_workflow": "This gateway evaluates the grounded answer and its supporting evidence before anything is shown to the analyst. If support is strong enough, it passes the answer forward; if evidence is weak, missing, or insufficiently grounded, it converts the outcome into a refusal payload.",
-        "why_it_exists": "This node is built custom because no catalog component provides the required quality evaluation and refusal enforcement behavior. It is a core trust mechanism because the user explicitly chose refusal without evidence and preferred verified answers over unverified speed.",
-        "consumes_from": [
-          "Grounded Answer Synthesis with Citations",
-          "draft grounded answer with citations"
-        ],
-        "feeds_into": [
-          "Response Delivery to Analyst",
-          "approved answer or refusal payload"
-        ],
-        "chat_relationship": "The user said 'Refuse without evidence' and agreed to verified answers first, so this gate enforces that unsupported answers do not reach analysts.",
-        "execution_summary": "Approves well-supported answers or triggers a refusal when evidence is insufficient."
-      },
-      "response-delivery": {
-        "purpose": "Present the approved answer or refusal to the analyst in concise chatbot form without adding new facts.",
-        "role_in_workflow": "This is the final user-facing step that formats the approved payload into a clean chatbot response. It preserves the grounded content, citations, and any refusal or conflict messaging while ensuring the final wording stays concise and safe.",
-        "why_it_exists": "This node reuses the Final Answer Rewriter because it is well suited to polish the final response without introducing unsupported content. It exists as a separate delivery layer so the system can keep answer generation and user-facing formatting distinct, which helps preserve trust and consistency.",
-        "consumes_from": [
-          "Evidence Sufficiency and Refusal Gate",
-          "approved answer or refusal payload"
-        ],
-        "feeds_into": [],
-        "chat_relationship": "The user wants a direct self-service chatbot for business analysts, so this step turns the verified answer or refusal into the final response they see.",
-        "execution_summary": "Formats and returns the final supported answer or refusal to the analyst."
+        "chat_relationship": "Supports the user-defined workflow requirements.",
+        "execution_summary": "Produces a concise natural-language response that merges results and includes a warning when confidence is low."
       }
     },
-    "logic_validation": {
-      "is_valid": true,
-      "summary": "The workflow plausibly satisfies the hybrid grounded chatbot requirements with correct core topology, source combination, conflict handling, and refusal gating.",
-      "issues": [
-        "The SQL node is labeled as generation and execution but is tagged only with required_capability 'sql_generation', so execution is implicit rather than explicitly represented.",
-        "Access-aware enforcement is described in retrieval and SQL steps but there is no explicit policy/governance control node to guarantee approved-source and permission checks across both paths.",
-        "The evidence sufficiency gate occurs after answer drafting, which is workable but may waste compute and makes refusal logic depend on a drafted answer rather than directly on evidence quality.",
-        "Response Delivery uses an answer_consolidation agent for formatting; this is acceptable from the catalog, but the step should be tightly constrained to avoid altering citations or conflict wording."
-      ],
-      "suggestions": [
-        "Clarify that Quin SQL Agent Chain covers both sql_generation and sql_execution within the same runtime step, or split execution into a separate node if stricter auditability is needed.",
-        "Add explicit cross-source access/policy enforcement metadata or a governance check before retrieval/query execution if implementation needs stronger compliance guarantees.",
-        "Consider evaluating evidence sufficiency on the normalized evidence set before final synthesis, then synthesize either a grounded answer or a refusal message from that decision.",
-        "Define deterministic refusal criteria for cases where one source is silent, SQL fails, or retrieved evidence is stale/partial.",
-        "Lock the final response formatter to preserve citations, provenance, and conflict flags verbatim from upstream outputs."
-      ],
-      "operations": [],
-      "recommended_workflow": null,
-      "auto_apply_enabled": false,
-      "post_fix_status": "resolved",
-      "operations_applied": 0,
-      "operations_undone": 0
-    },
-    "post_fix_status": "resolved"
+    "architecture_approved": false,
+    "tech_stack": "Python / FastAPI / React"
   },
-  "exportedAt": "2026-07-31T09:52:03.628045+00:00"
+  "exportedAt": "2026-08-13T10:16:05.654626+00:00"
 }
