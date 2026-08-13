@@ -1,0 +1,26 @@
+{
+  "id": "final-answer",
+  "label": "Final Natural-Language Answer",
+  "type": "agent",
+  "agentId": null,
+  "description": "Produces a concise natural-language response that merges results and includes a warning when confidence is low.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "build",
+  "catalogAgentName": null,
+  "rationale": "catalog match Final Answer Consolidation Agent (final_answer_consolidation_agent) has no seedable package in agent library",
+  "explanation": {
+    "purpose": "Final Natural-Language Answer",
+    "role_in_workflow": "Final Natural-Language Answer is a agent step. Receives from Answer Quality Evaluation. Passes to Workflow outcome.",
+    "why_it_exists": "catalog match Final Answer Consolidation Agent (final_answer_consolidation_agent) has no seedable package in agent library",
+    "consumes_from": [
+      "Answer Quality Evaluation"
+    ],
+    "feeds_into": [
+      "Workflow outcome"
+    ],
+    "chat_relationship": "Supports the user-defined workflow requirements.",
+    "execution_summary": "Produces a concise natural-language response that merges results and includes a warning when confidence is low."
+  },
+  "status": "scaffold"
+}
