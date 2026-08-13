@@ -1,0 +1,26 @@
+{
+  "id": "answer-quality-eval",
+  "label": "Answer Quality Evaluation",
+  "type": "agent",
+  "agentId": null,
+  "description": "Scores groundedness and completeness to determine whether a low-confidence warning is needed.",
+  "inputs": [],
+  "outputs": [],
+  "reuseDecision": "build",
+  "catalogAgentName": null,
+  "rationale": "catalog match Evidence Checker (evidence_checker) has no seedable package in agent library",
+  "explanation": {
+    "purpose": "Answer Quality Evaluation",
+    "role_in_workflow": "Answer Quality Evaluation is a agent step. Receives from Evidence Reconciliation & Confidence Gate. Passes to Final Natural-Language Answer.",
+    "why_it_exists": "catalog match Evidence Checker (evidence_checker) has no seedable package in agent library",
+    "consumes_from": [
+      "Evidence Reconciliation & Confidence Gate"
+    ],
+    "feeds_into": [
+      "Final Natural-Language Answer"
+    ],
+    "chat_relationship": "Supports the user-defined workflow requirements.",
+    "execution_summary": "Scores groundedness and completeness to determine whether a low-confidence warning is needed."
+  },
+  "status": "scaffold"
+}
