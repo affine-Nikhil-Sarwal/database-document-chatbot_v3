@@ -2,6 +2,6 @@
   "node_id": "user-question-intake",
   "entrypoint": "run",
   "module": "agents.generated.user_question_intake.agent",
-  "inputs": ["user_question", "session_context", "documents_pdf_docx", "structured_tabular_data"],
+  "inputs": ["question_pdf", "session_context", "documents_pdf_docx", "structured_tabular_data"],
   "outputs": ["user_question", "session_context"]
 }

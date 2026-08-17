@@ -170,14 +170,14 @@ def test_dry_run_cli():
     assert proc.returncode == 0, proc.stderr
 
 
-def test_full_pipeline_dry_run():
+def test_full_pipeline_dry_run(sample_question_pdf: Path):
     from orchestrator.graph import run_workflow_from_node, set_dry_run
 
     set_dry_run(True)
     result = run_workflow_from_node(
         "user-question-intake",
         {
-            "user_question": "Compare policy documents with Q1 sales totals",
+            "question_pdf": str(sample_question_pdf),
             "session_context": {"allowed_document_ids": ["*"], "allowed_tables": ["*"]},
         },
     )
@@ -185,14 +185,38 @@ def test_full_pipeline_dry_run():
     assert result["approved_answer_or_refusal_payload"]["status"] == "refused"
 
 
-def test_http_chat_and_health():
+def test_intake_extracts_question_from_pdf(sample_question_pdf: Path):
+    from agents.generated.user_question_intake.agent import execute
+
+    out = execute(
+        {
+            "question_pdf": str(sample_question_pdf),
+            "session_context": {"allowed_document_ids": ["*"], "allowed_tables": ["*"]},
+        },
+        dry_run=True,
+    )
+    assert "Compare policy documents" in out["user_question"]
+    assert sample_question_pdf.name in str(out["session_context"]["document_references"])
+
+
+def test_intake_rejects_missing_pdf():
+    from agents.generated.user_question_intake.agent import execute
+
+    from workflow.exceptions import ValidationError
+
+    with pytest.raises(ValidationError, match="question_pdf is required"):
+        execute({"session_context": {}}, dry_run=True)
+
+
+def test_http_chat_and_health(sample_question_pdf: Path):
     from main import app
 
     client = TestClient(app)
-    response = client.post(
-        "/chat",
-        json={"user_question": "What is the refund policy?"},
-    )
+    with sample_question_pdf.open("rb") as pdf_file:
+        response = client.post(
+            "/chat",
+            files={"question_pdf": ("question.pdf", pdf_file, "application/pdf")},
+        )
     assert response.status_code == 200
     assert "X-Request-ID" in response.headers
     body = response.json()

@@ -3,7 +3,7 @@
   "label": "Chat Intake & Safety Gate",
   "type": "agent",
   "agentId": null,
-  "description": "Receives the internal user question and performs intake prechecks before orchestration.",
+  "description": "Receives an uploaded question PDF, extracts analyst text, and performs intake prechecks before orchestration.",
   "inputs": [],
   "outputs": [],
   "reuseDecision": "build",

@@ -1,5 +1,5 @@
 {
-  "user_question": "What were total Mars sales in Q1 2024 according to approved documents and sales tables?",
+  "question_pdf": "examples/sample_question.pdf",
   "session_context": {
     "user_id": "analyst-001",
     "request_id": "example-request-001",

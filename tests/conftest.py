@@ -3,8 +3,19 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 import pytest
+
+
+@pytest.fixture
+def sample_question_pdf(tmp_path: Path) -> Path:
+    from tests.pdf_fixtures import write_question_pdf
+
+    return write_question_pdf(
+        tmp_path / "sample_question.pdf",
+        "Compare policy documents with Q1 sales totals",
+    )
 
 
 @pytest.fixture(autouse=True)

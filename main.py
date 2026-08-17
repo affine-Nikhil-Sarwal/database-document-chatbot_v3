@@ -135,31 +135,18 @@ def _build_payload(args: argparse.Namespace) -> dict[str, Any]:
     if args.input_json:
         payload = _load_input_json(Path(args.input_json))
     elif args.file:
-        file_path = Path(args.file)
+        file_path = Path(args.file).resolve()
         payload = {
-            "user_question": args.question or f"Summarize the content of {file_path.name}",
+            "question_pdf": str(file_path),
             "session_context": {
                 "user_id": "cli-user",
                 "request_id": str(uuid.uuid4()),
                 "allowed_document_ids": ["*"],
                 "allowed_tables": ["*"],
             },
-            "documents_pdf_docx": str(file_path.resolve()),
         }
     else:
-        if not args.question:
-            raise ConfigurationError("Provide --question, --file, or --input-json")
-        payload = {
-            "user_question": args.question,
-            "session_context": {
-                "user_id": "cli-user",
-                "request_id": str(uuid.uuid4()),
-                "allowed_document_ids": ["*"],
-                "allowed_tables": ["*"],
-            },
-        }
-    if args.question and "user_question" not in payload:
-        payload["user_question"] = args.question
+        raise ConfigurationError("Provide --file (question PDF) or --input-json")
     return payload
 
 
@@ -213,8 +200,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--health", action="store_true", help="Check integration health and exit")
     parser.add_argument("--dry-run", action="store_true", help="Exercise orchestration without live I/O")
-    parser.add_argument("--question", "-q", type=str, help="Analyst question text")
-    parser.add_argument("--file", "-f", type=str, help="Path to an input document reference")
+    parser.add_argument("--file", "-f", type=str, help="Path to a PDF containing the analyst question")
     parser.add_argument("--input-json", type=str, help="Path to JSON payload for intake")
     parser.add_argument("--serve", action="store_true", help="Start uvicorn server")
     parser.add_argument("--host", default="0.0.0.0", help="Uvicorn host")
@@ -235,7 +221,7 @@ def main(argv: list[str] | None = None) -> int:
 
         uvicorn.run("main:app", host=args.host, port=args.port, reload=False)
         return 0
-    if args.question or args.file or args.input_json:
+    if args.file or args.input_json:
         try:
             return _cli_run(args)
         except ConfigurationError as exc:

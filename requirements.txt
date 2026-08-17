@@ -5,8 +5,10 @@ fastapi
 httpx
 openai>=1.0
 pandas
+pymupdf
 pydantic
 pydantic-settings
+python-multipart
 pyodbc
 pytest
 python-dotenv
