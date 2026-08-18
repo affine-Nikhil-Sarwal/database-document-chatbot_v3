@@ -1,10 +1,9 @@
 {
   "workflow_id": "session-1784805317987-jldkil",
-  "title": "Database + document chatbot",
+  "title": "Database chatbot",
   "nodes": [
     {"id": "user-question-intake", "kind": "generated", "module": "agents.generated.user_question_intake.agent"},
     {"id": "question-routing", "kind": "generated", "module": "agents.generated.question_routing.agent"},
-    {"id": "document-retrieval", "kind": "reuse", "module": "agents.reused.eryl_semantic_rag_agent_chain.agent", "entrypoint": "ErylChainRunner.run"},
     {"id": "sql-query-chain", "kind": "reuse", "module": "agents.reused.quin_sql_agent_chain.agent", "entrypoint": "QuinChainRunner.run"},
     {"id": "evidence-reconciliation", "kind": "generated", "module": "agents.generated.evidence_reconciliation.agent"},
     {"id": "conflict-detection", "kind": "generated", "module": "agents.generated.conflict_detection.agent"},
@@ -15,7 +14,6 @@
   "runtime_order": [
     "user-question-intake",
     "question-routing",
-    "document-retrieval",
     "sql-query-chain",
     "evidence-reconciliation",
     "conflict-detection",
@@ -23,7 +21,6 @@
     "evidence-sufficiency-gate",
     "response-delivery"
   ],
-  "parallel_groups": [["document-retrieval", "sql-query-chain"]],
   "adapters": [
     "agents.adapters.routing_to_reuse",
     "agents.adapters.reuse_to_reconciliation",

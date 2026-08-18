@@ -20,7 +20,6 @@ def test_agent_discovery():
     expected = {
         "user-question-intake",
         "question-routing",
-        "document-retrieval",
         "sql-query-chain",
         "evidence-reconciliation",
         "conflict-detection",
@@ -62,8 +61,26 @@ def test_routing_heuristic_dry_run():
         dry_run=True,
     )
     decision = out["routing_decision"]
-    assert decision["run_document"] is True
-    assert decision["analysis_type"] == "Semantic-based"
+    assert decision["run_document"] is False
+    assert decision["run_sql"] is False
+    assert decision["refusal_reason"] == "unsupported_question_type"
+
+
+def test_routing_heuristic_sql_only():
+    from agents.generated.question_routing.agent import execute
+
+    out = execute(
+        {
+            "user_question": "What were total sales last quarter?",
+            "session_context": {"allowed_tables": ["*"]},
+        },
+        dry_run=True,
+    )
+    decision = out["routing_decision"]
+    assert decision["run_sql"] is True
+    assert decision["run_document"] is False
+    assert decision["analysis_type"] == "SQL-based"
+    assert decision["refusal_reason"] is None
 
 
 def test_reconciliation_with_fixture_evidence():
@@ -183,6 +200,8 @@ def test_full_pipeline_dry_run():
     )
     assert "natural_language_answers" in result
     assert result["approved_answer_or_refusal_payload"]["status"] == "refused"
+    assert result["approved_answer_or_refusal_payload"]["refusal_reason"] == "unsupported_question_type"
+    assert "structured/database" in result["natural_language_answers"]
 
 
 def test_http_chat_and_health():
@@ -197,6 +216,7 @@ def test_http_chat_and_health():
     assert "X-Request-ID" in response.headers
     body = response.json()
     assert "natural_language_answers" in body
+    assert "structured/database" in body["natural_language_answers"]
 
     health = client.get("/health")
     assert health.status_code in (200, 503)

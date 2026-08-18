@@ -21,7 +21,7 @@
           "label": "Analysis Type Router",
           "type": "gateway",
           "agent_id": null,
-          "description": "Classifies the question into SQL-based, Semantic-based, Both-dependent, or Both-independent paths.",
+          "description": "Classifies the question into SQL-based or unsupported (non-database) paths.",
           "required_capability": "routing",
           "inputs": [],
           "outputs": []
@@ -33,16 +33,6 @@
           "agent_id": "quin_sql_agent_chain",
           "description": "Generates and executes SQL against structured sources to return analyst-ready structured evidence.",
           "required_capability": "sql_generation",
-          "inputs": [],
-          "outputs": []
-        },
-        {
-          "id": "document-retrieval",
-          "label": "Document Retrieval Chain",
-          "type": "agent",
-          "agent_id": "eryl_semantic_rag_agent_chain",
-          "description": "Retrieves relevant indexed document content for the user question from the document corpus.",
-          "required_capability": "retrieval",
           "inputs": [],
           "outputs": []
         },
@@ -91,70 +81,10 @@
           "condition": "analysis_type == 'SQL-based'"
         },
         {
-          "from_id": "analysis-router",
-          "to_id": "document-retrieval",
-          "label": "route to document path",
-          "condition": "analysis_type == 'Semantic-based'"
-        },
-        {
-          "from_id": "analysis-router",
-          "to_id": "sql-answering",
-          "label": "fan-out structured path",
-          "condition": "analysis_type == 'Both-dependent'"
-        },
-        {
-          "from_id": "analysis-router",
-          "to_id": "document-retrieval",
-          "label": "fan-out document path",
-          "condition": "analysis_type == 'Both-dependent'"
-        },
-        {
-          "from_id": "analysis-router",
-          "to_id": "sql-answering",
-          "label": "fan-out structured path",
-          "condition": "analysis_type == 'Both-independent'"
-        },
-        {
-          "from_id": "analysis-router",
-          "to_id": "document-retrieval",
-          "label": "fan-out document path",
-          "condition": "analysis_type == 'Both-independent'"
-        },
-        {
           "from_id": "sql-answering",
           "to_id": "evidence-reconciliation",
           "label": "structured evidence",
           "condition": null
-        },
-        {
-          "from_id": "document-retrieval",
-          "to_id": "evidence-reconciliation",
-          "label": "document evidence",
-          "condition": null
-        },
-        {
-          "from_id": "sql-answering",
-          "to_id": "evidence-reconciliation",
-          "label": "structured evidence for hybrid merge",
-          "condition": "analysis_type == 'Both-dependent'"
-        },
-        {
-          "from_id": "document-retrieval",
-          "to_id": "evidence-reconciliation",
-          "label": "document evidence for hybrid merge",
-          "condition": "analysis_type == 'Both-dependent'"
-        },
-        {
-          "from_id": "sql-answering",
-          "to_id": "evidence-reconciliation",
-          "label": "structured evidence for hybrid merge",
-          "condition": "analysis_type == 'Both-independent'"
-        },
-        {
-          "from_id": "document-retrieval",
-          "to_id": "evidence-reconciliation",
-          "label": "document evidence for hybrid merge",
-          "condition": "analysis_type == 'Both-independent'"
         },
         {
           "from_id": "evidence-reconciliation",
@@ -200,16 +130,6 @@
         "rationale": "matched Quin SQL Agent Chain",
         "catalog_score": 0.35,
         "required_capability": "sql_generation"
-      },
-      {
-        "node_id": "document-retrieval",
-        "node_label": "Document Retrieval Chain",
-        "decision": "adapt",
-        "agent_id": "eryl_semantic_rag_agent_chain",
-        "agent_name": "Eryl Semantic RAG Agent Chain",
-        "rationale": "matched Eryl Semantic RAG Agent Chain",
-        "catalog_score": 0.95,
-        "required_capability": "retrieval"
       },
       {
         "node_id": "evidence-reconciliation",
@@ -1429,23 +1349,6 @@
         ],
         "chat_relationship": "Supports the user-defined workflow requirements.",
         "execution_summary": "Generates and executes SQL against structured sources to return analyst-ready structured evidence."
-      },
-      "document-retrieval": {
-        "purpose": "Document Retrieval Chain",
-        "role_in_workflow": "Document Retrieval Chain is a agent step. Receives from Analysis Type Router, Analysis Type Router, Analysis Type Router. Passes to Evidence Reconciliation & Confidence Gate, Evidence Reconciliation & Confidence Gate, Evidence Reconciliation & Confidence Gate.",
-        "why_it_exists": "matched Eryl Semantic RAG Agent Chain",
-        "consumes_from": [
-          "Analysis Type Router",
-          "Analysis Type Router",
-          "Analysis Type Router"
-        ],
-        "feeds_into": [
-          "Evidence Reconciliation & Confidence Gate",
-          "Evidence Reconciliation & Confidence Gate",
-          "Evidence Reconciliation & Confidence Gate"
-        ],
-        "chat_relationship": "Supports the user-defined workflow requirements.",
-        "execution_summary": "Retrieves relevant indexed document content for the user question from the document corpus."
       },
       "evidence-reconciliation": {
         "purpose": "Evidence Reconciliation & Confidence Gate",

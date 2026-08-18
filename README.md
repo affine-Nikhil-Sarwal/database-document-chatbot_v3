@@ -19,37 +19,24 @@ Internal employees need a chatbot that can answer analyst-style questions by com
 
 ### Interview summary
 
-Provide a single internal chatbot that routes questions to the right data path, merges database and document results, and returns concise answers with warnings when confidence is low.
+Provide a single internal chatbot that routes structured/database questions to the SQL answering path and returns concise answers with warnings when confidence is low. Document and hybrid questions are rejected with a clear explanation.
 
 ## Architecture summary
 
-This architecture implements an internal-only hybrid analyst chatbot with a true parallel orchestration model: intake and safety screening, intent-based routing, structured SQL answering, document retrieval, evidence reconciliation, confidence evaluation, and final answer generation. The flow follows the provided spec closely and preserves the requirement that users receive only a concise natural-language answer, without raw evidence rows or document snippets.
+This architecture implements an internal-only SQL analyst chatbot: intake and safety screening, intent-based routing, structured SQL answering, evidence reconciliation, confidence evaluation, and final answer generation. Questions that are not clearly structured/database queries are rejected early with an explanation that only SQL-based questions are supported.
 
-The router fans out to both the SQL and document branches whenever the question requires hybrid reasoning (`Both-dependent` or `Both-independent`), satisfying the required hybrid retrieval pattern. Structured evidence is produced by the SQL chain, while document evidence is produced by the semantic RAG chain. These outputs join at a shared reconciliation step using the reusable Evidence Checker, which handles conflict detection and source-priority logic before a dedicated quality-evaluation pass determines whether the final response should include a low-confidence warning.
-
-Reuse is high: all 7 processing steps use Affine catalog assets, with one light adaptation for the quality-evaluation output contract. This exceeds the catalog-first target and uses 6 distinct catalog agents across intake, routing, SQL, retrieval, validation, and delivery. No eval persistence node is included because the spec does not indicate that evaluation or audit results must be persisted.
-
-Primary risks are capability gaps around the exact SQL agent selected and the need to configure routing labels consistently across the UI and orchestration layer. In particular, the higher-scoring `text_to_sql_analytics_agent` could not be used because its catalog capabilities are unspecified, so `quin_sql_agent_chain` is the compliant choice. Another implementation consideration is ensuring the Evidence Checker emits both merge decisions and confidence metadata in a schema the final answer agent can consume reliably.
+Structured evidence is produced exclusively by the SQL chain (`quin_sql_agent_chain`). Evidence passes through reconciliation, conflict detection, and a quality-evaluation gate before the final natural-language answer is delivered. Users receive only a concise answer without raw evidence rows.
 
 ## Workflow overview
 
-This architecture has **7** step(s) and **15** connection(s).
+This architecture has **6** runtime step(s) in the SQL-only execution path.
 
 ### Execution flow
 
 - **Chat Intake & Safety Gate** → *validated user question* → **Analysis Type Router**
 - **Analysis Type Router** → *route to structured path* → **SQL Answering Chain**
-- **Analysis Type Router** → *route to document path* → **Document Retrieval Chain**
-- **Analysis Type Router** → *fan-out structured path* → **SQL Answering Chain**
-- **Analysis Type Router** → *fan-out document path* → **Document Retrieval Chain**
-- **Analysis Type Router** → *fan-out structured path* → **SQL Answering Chain**
-- **Analysis Type Router** → *fan-out document path* → **Document Retrieval Chain**
+- **Analysis Type Router** → *unsupported question* → **Evidence Sufficiency Gate** → **Final Natural-Language Answer**
 - **SQL Answering Chain** → *structured evidence* → **Evidence Reconciliation & Confidence Gate**
-- **Document Retrieval Chain** → *document evidence* → **Evidence Reconciliation & Confidence Gate**
-- **SQL Answering Chain** → *structured evidence for hybrid merge* → **Evidence Reconciliation & Confidence Gate**
-- **Document Retrieval Chain** → *document evidence for hybrid merge* → **Evidence Reconciliation & Confidence Gate**
-- **SQL Answering Chain** → *structured evidence for hybrid merge* → **Evidence Reconciliation & Confidence Gate**
-- **Document Retrieval Chain** → *document evidence for hybrid merge* → **Evidence Reconciliation & Confidence Gate**
 - **Evidence Reconciliation & Confidence Gate** → *merged evidence and conflict flags* → **Answer Quality Evaluation**
 - **Answer Quality Evaluation** → *quality score and warning flag* → **Final Natural-Language Answer**
 
