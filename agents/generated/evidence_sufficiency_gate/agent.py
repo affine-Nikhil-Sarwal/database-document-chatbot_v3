@@ -8,7 +8,13 @@ from typing import Any
 REFUSAL_TEMPLATE = (
     "I cannot provide a supported answer because the available approved evidence "
     "is insufficient to answer your question safely. Please refine your question "
-    "or ensure the relevant documents and data are accessible within your permissions."
+    "or ensure the relevant data is accessible within your permissions."
+)
+
+UNSUPPORTED_QUESTION_TEMPLATE = (
+    "This chatbot supports only structured/database questions. Document retrieval, "
+    "policy lookup, and hybrid document-plus-database questions are no longer supported. "
+    "Please rephrase your question to ask about data in the structured database tables."
 )
 
 
@@ -31,6 +37,8 @@ def execute(payload: dict[str, Any], *, dry_run: bool = False) -> dict[str, Any]
         refusal_reason = "permission_denied"
     elif routing.get("refusal_reason") == "permission_denied":
         refusal_reason = "permission_denied"
+    elif routing.get("refusal_reason") == "unsupported_question_type":
+        refusal_reason = "unsupported_question_type"
     elif generation_flags.get("insufficient_evidence") or generation_flags.get("generation_error"):
         refusal_reason = "insufficient_evidence"
     elif not draft or "insufficient_evidence" in draft.lower():
@@ -59,15 +67,20 @@ def execute(payload: dict[str, Any], *, dry_run: bool = False) -> dict[str, Any]
                 refusal_reason = "partial_evidence"
 
     if refusal_reason:
+        message = (
+            UNSUPPORTED_QUESTION_TEMPLATE
+            if refusal_reason == "unsupported_question_type"
+            else REFUSAL_TEMPLATE
+        )
         payload_out = {
             "status": "refused",
-            "message": REFUSAL_TEMPLATE,
+            "message": message,
             "citations": [],
             "conflicts": conflicts,
             "refusal_reason": refusal_reason,
         }
         return {
-            "natural_language_answers": REFUSAL_TEMPLATE,
+            "natural_language_answers": message,
             "approved_answer_or_refusal_payload": payload_out,
         }
 
