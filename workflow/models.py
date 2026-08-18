@@ -71,8 +71,18 @@ class GateDecision(BaseModel):
     refusal_reason: str | None = None
 
 
+class CsvAttachment(BaseModel):
+    filename: str
+    media_type: str = "text/csv; charset=utf-8"
+    content_base64: str
+    row_count: int = 0
+    column_names: list[str] = Field(default_factory=list)
+    table_count: int = 1
+
+
 class WorkflowResult(BaseModel):
     natural_language_answers: str
+    csv_attachment: CsvAttachment | None = None
     gate_decision: GateDecision | None = None
     routing_decision: RoutingDecision | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)

@@ -173,11 +173,14 @@ def run_full_pipeline(payload: dict[str, Any] | None = None) -> dict[str, Any]:
             {"approved_answer_or_refusal_payload": gate_out["approved_answer_or_refusal_payload"]},
             dry_run=dry_run,
         )
-        return {
+        result = {
             "natural_language_answers": delivery_out["natural_language_answers"],
             "routing_decision": routing_decision,
             "approved_answer_or_refusal_payload": gate_out["approved_answer_or_refusal_payload"],
         }
+        if delivery_out.get("csv_attachment") is not None:
+            result["csv_attachment"] = delivery_out["csv_attachment"]
+        return result
 
     if not dry_run:
         _prepare_live_run()
@@ -222,13 +225,16 @@ def run_full_pipeline(payload: dict[str, Any] | None = None) -> dict[str, Any]:
         dry_run=dry_run,
     )
 
-    return {
+    result = {
         "natural_language_answers": delivery_out["natural_language_answers"],
         "routing_decision": routing_decision,
         "normalized_cross_source_evidence_set": recon_out["normalized_cross_source_evidence_set"],
         "approved_answer_or_refusal_payload": gate_out["approved_answer_or_refusal_payload"],
         "evidence_plus_conflict_annotations": conflict_out["evidence_plus_conflict_annotations"],
     }
+    if delivery_out.get("csv_attachment") is not None:
+        result["csv_attachment"] = delivery_out["csv_attachment"]
+    return result
 
 
 def run_workflow_from_node(node_id: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
