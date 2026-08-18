@@ -3,17 +3,20 @@
 from __future__ import annotations
 
 import asyncio
+import base64
 import logging
 from typing import Any
 
-from fastapi import APIRouter, Request
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, Field
 
 from orchestrator.graph import run_workflow_from_node
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+_csv_download_cache: dict[str, tuple[str, bytes]] = {}
 
 
 class SessionContextModel(BaseModel):
@@ -32,6 +35,36 @@ class ChatRequest(BaseModel):
     structured_tabular_data: dict[str, Any] | None = None
 
 
+def _register_csv_download(attachment: dict[str, Any]) -> str | None:
+    content_b64 = attachment.get("content_base64")
+    if not isinstance(content_b64, str) or not content_b64:
+        return None
+    try:
+        payload = base64.b64decode(content_b64.encode("ascii"))
+    except (ValueError, UnicodeEncodeError):
+        return None
+    token = attachment.get("download_token")
+    if not isinstance(token, str) or not token:
+        import uuid
+
+        token = str(uuid.uuid4())
+        attachment["download_token"] = token
+    filename = str(attachment.get("filename") or "answer_tables.csv")
+    _csv_download_cache[token] = (filename, payload)
+    return token
+
+
+def _attach_csv_download_url(result: dict[str, Any]) -> dict[str, Any]:
+    attachment = result.get("csv_attachment")
+    if not isinstance(attachment, dict):
+        return result
+    token = _register_csv_download(attachment)
+    if token:
+        result = dict(result)
+        result["csv_download_url"] = f"/download/csv/{token}"
+    return result
+
+
 @router.post("/chat", tags=["intake"], summary="User Question Intake")
 async def chat_intake(body: ChatRequest, request: Request) -> dict[str, Any]:
     """Start the workflow at user-question-intake."""
@@ -47,7 +80,19 @@ async def chat_intake(body: ChatRequest, request: Request) -> dict[str, Any]:
         payload["documents_pdf_docx"] = body.documents_pdf_docx
     if body.structured_tabular_data is not None:
         payload["structured_tabular_data"] = body.structured_tabular_data
-    return await asyncio.to_thread(run_workflow_from_node, "user-question-intake", payload)
+    result = await asyncio.to_thread(run_workflow_from_node, "user-question-intake", payload)
+    return _attach_csv_download_url(result)
+
+
+@router.get("/download/csv/{token}", tags=["export"], summary="Download tabular answer CSV")
+async def download_csv(token: str) -> Response:
+    """Download CSV exported from a prior chat response."""
+    cached = _csv_download_cache.get(token)
+    if cached is None:
+        raise HTTPException(status_code=404, detail="CSV export not found or expired")
+    filename, payload = cached
+    headers = {"Content-Disposition": f'attachment; filename="{filename}"'}
+    return Response(content=payload, media_type="text/csv; charset=utf-8", headers=headers)
 
 
 @router.post("/upload", tags=["intake"], summary="User Question Intake (legacy path)")

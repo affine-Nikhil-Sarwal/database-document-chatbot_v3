@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from workflow.table_export import build_csv_attachment
+
 REFUSAL_HEADER = "## Unable to provide a supported answer\n\n"
 APPROVED_HEADER = "## Answer\n\n"
 
@@ -37,7 +39,12 @@ def execute(payload: dict[str, Any], *, dry_run: bool = False) -> dict[str, Any]
             body += f"  - SQL: {str(conflict.get('sql_claim', ''))[:200]}\n"
     if citations:
         body += "\n\n### Citations\n" + ", ".join(str(c) for c in citations)
-    return {"natural_language_answers": body}
+
+    result: dict[str, Any] = {"natural_language_answers": body}
+    csv_attachment = build_csv_attachment(body)
+    if csv_attachment is not None:
+        result["csv_attachment"] = csv_attachment
+    return result
 
 
 run = execute

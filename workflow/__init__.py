@@ -8,6 +8,7 @@ from workflow.exceptions import (
 )
 from workflow.models import (
     ConflictAnnotation,
+    CsvAttachment,
     EvidenceItem,
     EvidenceWithConflicts,
     GateDecision,
@@ -16,10 +17,12 @@ from workflow.models import (
     SessionContext,
     WorkflowResult,
 )
+from workflow.table_export import build_csv_attachment
 
 __all__ = [
     "ConfigurationError",
     "ConflictAnnotation",
+    "CsvAttachment",
     "EvidenceItem",
     "EvidenceWithConflicts",
     "GateDecision",
@@ -30,4 +33,5 @@ __all__ = [
     "SessionContext",
     "ValidationError",
     "WorkflowResult",
+    "build_csv_attachment",
 ]

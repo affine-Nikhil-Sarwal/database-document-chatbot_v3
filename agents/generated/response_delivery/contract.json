@@ -3,5 +3,5 @@
   "entrypoint": "run",
   "module": "agents.generated.response_delivery.agent",
   "inputs": ["approved_answer_or_refusal_payload"],
-  "outputs": ["natural_language_answers"]
+  "outputs": ["natural_language_answers", "csv_attachment"]
 }
