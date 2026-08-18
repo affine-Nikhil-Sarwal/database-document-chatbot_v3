@@ -50,7 +50,7 @@ def _build_decision(
                 "run_document": False,
                 "run_sql": False,
                 "initial_question": user_question,
-                "analysis_type": "Semantic-based",
+                "analysis_type": "SQL-based",
                 "rationale": rationale,
                 "refusal_reason": "unsupported_question_type",
             }
