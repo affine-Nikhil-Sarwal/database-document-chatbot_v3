@@ -4,7 +4,13 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import hashlib
+import hmac
+import json
 import logging
+import os
+import time
+import zlib
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request
@@ -16,7 +22,27 @@ from orchestrator.graph import run_workflow_from_node
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
-_csv_download_cache: dict[str, tuple[str, bytes]] = {}
+_CSV_DOWNLOAD_TTL_SECONDS = 15 * 60
+
+
+def _csv_download_secret() -> bytes:
+    configured = os.environ.get("CSV_DOWNLOAD_SECRET", "").strip()
+    if configured:
+        return configured.encode("utf-8")
+    for env_name in ("AZURE_OPENAI_API_KEY", "AZURE_SEARCH_API_KEY", "SQL_PASSWORD"):
+        value = os.environ.get(env_name, "").strip()
+        if value:
+            return hashlib.sha256(f"csv-download|{env_name}|{value}".encode("utf-8")).digest()
+    return hashlib.sha256(b"csv-download-dev-fallback").digest()
+
+
+def _b64url_encode(raw: bytes) -> str:
+    return base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
+
+
+def _b64url_decode(value: str) -> bytes:
+    padding = "=" * ((4 - len(value) % 4) % 4)
+    return base64.urlsafe_b64decode(value + padding)
 
 
 class SessionContextModel(BaseModel):
@@ -40,18 +66,63 @@ def _register_csv_download(attachment: dict[str, Any]) -> str | None:
     if not isinstance(content_b64, str) or not content_b64:
         return None
     try:
+        base64.b64decode(content_b64.encode("ascii"))
+    except (ValueError, UnicodeEncodeError):
+        return None
+    filename = str(attachment.get("filename") or "answer_tables.csv")
+    body = json.dumps(
+        {
+            "f": filename,
+            "p": content_b64,
+            "e": int(time.time()) + _CSV_DOWNLOAD_TTL_SECONDS,
+        },
+        separators=(",", ":"),
+    ).encode("utf-8")
+    encoded = _b64url_encode(zlib.compress(body, level=9))
+    signature = hmac.new(_csv_download_secret(), encoded.encode("ascii"), hashlib.sha256).digest()
+    token = f"{encoded}.{_b64url_encode(signature)}"
+    attachment["download_token"] = token
+    return token
+
+
+def _read_csv_download(token: str) -> tuple[str, bytes] | None:
+    if not token or "." not in token:
+        return None
+    encoded, signature_b64 = token.rsplit(".", 1)
+    if not encoded or not signature_b64:
+        return None
+    try:
+        given_sig = _b64url_decode(signature_b64)
+        expected_sig = hmac.new(
+            _csv_download_secret(), encoded.encode("ascii"), hashlib.sha256
+        ).digest()
+    except (ValueError, UnicodeEncodeError):
+        return None
+    if len(given_sig) != len(expected_sig) or not hmac.compare_digest(given_sig, expected_sig):
+        return None
+    try:
+        body = json.loads(zlib.decompress(_b64url_decode(encoded)))
+    except (ValueError, OSError, json.JSONDecodeError, UnicodeDecodeError, zlib.error, TypeError):
+        return None
+    if not isinstance(body, dict):
+        return None
+    try:
+        expires_at = int(body["e"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    if expires_at < int(time.time()):
+        return None
+    filename = body.get("f")
+    if not isinstance(filename, str) or not filename:
+        filename = "answer_tables.csv"
+    content_b64 = body.get("p")
+    if not isinstance(content_b64, str) or not content_b64:
+        return None
+    try:
         payload = base64.b64decode(content_b64.encode("ascii"))
     except (ValueError, UnicodeEncodeError):
         return None
-    token = attachment.get("download_token")
-    if not isinstance(token, str) or not token:
-        import uuid
-
-        token = str(uuid.uuid4())
-        attachment["download_token"] = token
-    filename = str(attachment.get("filename") or "answer_tables.csv")
-    _csv_download_cache[token] = (filename, payload)
-    return token
+    return filename, payload
 
 
 def _attach_csv_download_url(result: dict[str, Any]) -> dict[str, Any]:
@@ -87,7 +158,7 @@ async def chat_intake(body: ChatRequest, request: Request) -> dict[str, Any]:
 @router.get("/download/csv/{token}", tags=["export"], summary="Download tabular answer CSV")
 async def download_csv(token: str) -> Response:
     """Download CSV exported from a prior chat response."""
-    cached = _csv_download_cache.get(token)
+    cached = _read_csv_download(token)
     if cached is None:
         raise HTTPException(status_code=404, detail="CSV export not found or expired")
     filename, payload = cached

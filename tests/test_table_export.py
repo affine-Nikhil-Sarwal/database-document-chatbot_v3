@@ -99,16 +99,23 @@ def test_delivery_omits_csv_for_refusal():
     assert "csv_attachment" not in out
 
 
-def test_http_csv_download_endpoint():
+def _csv_test_client():
+    from fastapi import FastAPI
     from fastapi.testclient import TestClient
 
-    from main import app
+    from api.routes import router
 
-    client = TestClient(app)
+    app = FastAPI()
+    app.include_router(router)
+    return TestClient(app)
+
+
+def test_http_csv_download_endpoint():
+    from api.routes import _register_csv_download
+
+    client = _csv_test_client()
     attachment = build_csv_attachment("| X | Y |\n| --- | --- |\n| 9 | 8 |\n")
     assert attachment is not None
-
-    from api.routes import _register_csv_download
 
     token = _register_csv_download(dict(attachment))
     assert token
@@ -119,3 +126,29 @@ def test_http_csv_download_endpoint():
     assert "attachment" in response.headers.get("content-disposition", "").lower()
     rows = list(csv.reader(io.StringIO(response.text)))
     assert rows == [["X", "Y"], ["9", "8"]]
+
+
+def test_http_csv_download_rejects_tampered_token():
+    from api.routes import _register_csv_download
+
+    client = _csv_test_client()
+    attachment = build_csv_attachment("| X | Y |\n| --- | --- |\n| 9 | 8 |\n")
+    assert attachment is not None
+    token = _register_csv_download(dict(attachment))
+    assert token
+    tampered = token[:-2] + ("A" if token[-2] != "A" else "B") + token[-1]
+    response = client.get(f"/download/csv/{tampered}")
+    assert response.status_code == 404
+
+
+def test_http_csv_download_rejects_expired_token(monkeypatch):
+    from api import routes
+
+    client = _csv_test_client()
+    attachment = build_csv_attachment("| X | Y |\n| --- | --- |\n| 9 | 8 |\n")
+    assert attachment is not None
+    token = routes._register_csv_download(dict(attachment))
+    assert token
+    monkeypatch.setattr(routes.time, "time", lambda: 10**12)
+    response = client.get(f"/download/csv/{token}")
+    assert response.status_code == 404
